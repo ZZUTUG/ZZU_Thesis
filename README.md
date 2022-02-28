@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 合肥工业大学学位论文 LaTeX 模板
 
 [![GitHub release](https://img.shields.io/github/release/HFUTTUG/HFUT_Thesis/all.svg)](https://github.com/HFUTTUG/HFUT_Thesis/releases/latest)
@@ -85,3 +86,8 @@
 - 鸣谢 [ustctug/ustcthesis](https://github.com/ustctug/ustcthesis) 项目
 
 - 有意加入[@HFUTTUG](https://github.com/HFUTTUG)的同学可发送[📧Email](mailto:hfuttug@163.com)
+=======
+# To do
+- cls学习
+- HFUT模版魔改 :-)
+>>>>>>> ef335c0c46b950727eba564f6fbfe3a7463af4c4
