@@ -1,0 +1,11 @@
+.DS_Store
+*.aux
+*.lof
+*.lot
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv
+
+

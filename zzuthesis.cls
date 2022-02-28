@@ -1,7 +1,7 @@
 %
 % Copyright (C) 2015-2021 by USTC TeX Users Group <https://github.com/ustctug>
 %
-% hfutthesis developed by HFUT TeX Users Group <https://github.com/HFUTTUG> on the 
+% zzuthesis developed by zzu TeX Users Group <https://github.com/zzuTUG> on the 
 % base of ustcthesis <https://github.com/usthtug/ustcthesis>.
 %
 % This file may be distributed and/or modified under the
@@ -14,20 +14,20 @@
 %
 
 \NeedsTeXFormat{LaTeX2e}[2017/04/15]
-\newcommand\hfutthesisversion{v1.0.3}
-\ProvidesClass{hfutthesis}[2021/08/15 {\hfutthesisversion} hfut thesis template]
+\newcommand\zzuthesisversion{v1.0.3}
+\ProvidesClass{zzuthesis}[2021/08/15 {\zzuthesisversion} zzu thesis template]
 
 % 报错和警告
-\newcommand\hfut@error[1]{%
-  \ClassError{hfutthesis}{#1}{}%
+\newcommand\zzu@error[1]{%
+  \ClassError{zzuthesis}{#1}{}%
 }
-\newcommand\hfut@warning[1]{%
-  \ClassWarning{hfutthesis}{#1}%
+\newcommand\zzu@warning[1]{%
+  \ClassWarning{zzuthesis}{#1}%
 }
 
 % 检查 \LaTeXe{} kernel 版本
 \@ifl@t@r\fmtversion{2017/04/15}{}{
-  \hfut@error{%
+  \zzu@error{%
     TeX Live 2017 or later version is required to compile this document%
   }
 }
@@ -35,7 +35,7 @@
 % 检查编译引擎，要求使用 XeLaTeX。
 \RequirePackage{iftex}
 \ifXeTeX\else
-  \hfut@error{XeLaTeX is required to compile this document}
+  \zzu@error{XeLaTeX is required to compile this document}
 \fi
 
 
@@ -45,17 +45,17 @@
 \RequirePackage{kvsetkeys}
 \RequirePackage{kvoptions}
 
-% 提供一个 \cs{hfutsetup} 命令支持 \emph{key-value} 的方式来设置。
-\let\hfut@setup@hook\@empty
-\newcommand\hfutsetup[1]{%
-  \let\hfut@setup@hook\@empty
-  \kvsetkeys{hfut}{#1}%
-  \hfut@setup@hook
+% 提供一个 \cs{zzusetup} 命令支持 \emph{key-value} 的方式来设置。
+\let\zzu@setup@hook\@empty
+\newcommand\zzusetup[1]{%
+  \let\zzu@setup@hook\@empty
+  \kvsetkeys{zzu}{#1}%
+  \zzu@setup@hook
 }
 
 % 同时用 \emph{key-value} 的方式来定义这些接口：
 % \begin{latex}
-%   \hfut@define@key{
+%   \zzu@define@key{
 %     <key> = {
 %       name = <name>,
 %       choices = {
@@ -71,93 +71,93 @@
 % 其中 |choices| 设置允许使用的值，默认为第一个（或者 \meta{default}）；
 % \meta{code} 是相应的内容被设置时执行的代码。
 
-\newcommand\hfut@define@key[1]{%
-  \kvsetkeys{hfut@key}{#1}%
+\newcommand\zzu@define@key[1]{%
+  \kvsetkeys{zzu@key}{#1}%
 }
-\kv@set@family@handler{hfut@key}{%
+\kv@set@family@handler{zzu@key}{%
 %
-% \cs{hfutsetup} 会将 \meta{value} 存到 \cs{hfut@\meta{key}}，
+% \cs{zzusetup} 会将 \meta{value} 存到 \cs{zzu@\meta{key}}，
 % 但是宏的名字包含 “-” 这样的特殊字符时不方便直接调用，比如 |key = math-style|，
 % 这时可以用 |name| 设置 \meta{key} 的别称，比如 |key = math@style|，
-% 这样就可以通过 \cs{hfut@math@style} 来引用。
+% 这样就可以通过 \cs{zzu@math@style} 来引用。
 % |default| 是定义该 \meta{key} 时默认的值，缺省为空。
 %
-  \@namedef{hfut@#1@@name}{#1}%
-  \def\hfut@@default{}%
-  \def\hfut@@choices{}%
-  \kv@define@key{hfut@value}{name}{%
-    \@namedef{hfut@#1@@name}{##1}%
+  \@namedef{zzu@#1@@name}{#1}%
+  \def\zzu@@default{}%
+  \def\zzu@@choices{}%
+  \kv@define@key{zzu@value}{name}{%
+    \@namedef{zzu@#1@@name}{##1}%
   }%
   %
-  % 由于在定义接口时，\cs{hfut@\meta{key}@@code} 不一定有定义，
+  % 由于在定义接口时，\cs{zzu@\meta{key}@@code} 不一定有定义，
   % 而且在文档类/宏包中还有可能对该 |key| 的 |code| 进行添加。
-  % 所以 \cs{hfut@\meta{key}@@code} 会检查如果在定义文档类/宏包时则推迟执行，否则立即执行。
+  % 所以 \cs{zzu@\meta{key}@@code} 会检查如果在定义文档类/宏包时则推迟执行，否则立即执行。
   %
-  \@namedef{hfut@#1@@check}{}%
-  \@namedef{hfut@#1@@code}{}%
+  \@namedef{zzu@#1@@check}{}%
+  \@namedef{zzu@#1@@code}{}%
   %
-  % 保存下 |choices = {}| 定义的内容，在定义 \cs{hfut@\meta{name}} 后再执行。
+  % 保存下 |choices = {}| 定义的内容，在定义 \cs{zzu@\meta{name}} 后再执行。
   %
-  \kv@define@key{hfut@value}{choices}{%
-    \def\hfut@@choices{##1}%
-    \@namedef{hfut@#1@@reset}{}%
+  \kv@define@key{zzu@value}{choices}{%
+    \def\zzu@@choices{##1}%
+    \@namedef{zzu@#1@@reset}{}%
     %
-    % \cs{hfut@\meta{key}@check} 检查 |value| 是否有效，
-    % 并设置 \cs{ifhfut@\meta{name}@\meta{value}}。
+    % \cs{zzu@\meta{key}@check} 检查 |value| 是否有效，
+    % 并设置 \cs{ifzzu@\meta{name}@\meta{value}}。
     %
-    \@namedef{hfut@#1@@check}{%
+    \@namedef{zzu@#1@@check}{%
       \@ifundefined{%
-        ifhfut@\@nameuse{hfut@#1@@name}@\@nameuse{hfut@\@nameuse{hfut@#1@@name}}%
+        ifzzu@\@nameuse{zzu@#1@@name}@\@nameuse{zzu@\@nameuse{zzu@#1@@name}}%
       }{%
-        \hfut@error{Invalid value "#1 = \@nameuse{hfut@\@nameuse{hfut@#1@@name}}"}%
+        \zzu@error{Invalid value "#1 = \@nameuse{zzu@\@nameuse{zzu@#1@@name}}"}%
       }%
-      \@nameuse{hfut@#1@@reset}%
-      \@nameuse{hfut@\@nameuse{hfut@#1@@name}@\@nameuse{hfut@\@nameuse{hfut@#1@@name}}true}%
+      \@nameuse{zzu@#1@@reset}%
+      \@nameuse{zzu@\@nameuse{zzu@#1@@name}@\@nameuse{zzu@\@nameuse{zzu@#1@@name}}true}%
     }%
   }%
-  \kv@define@key{hfut@value}{default}{%
-    \def\hfut@@default{##1}%
+  \kv@define@key{zzu@value}{default}{%
+    \def\zzu@@default{##1}%
   }%
-  \kvsetkeys{hfut@value}{#2}%
-  \@namedef{hfut@\@nameuse{hfut@#1@@name}}{}%
+  \kvsetkeys{zzu@value}{#2}%
+  \@namedef{zzu@\@nameuse{zzu@#1@@name}}{}%
   %
   % 第一个 \meta{choice} 设为 \meta{default}，
-  % 并且对每个 \meta{choice} 定义 \cs{ifhfut@\meta{name}@\meta{choice}}。
+  % 并且对每个 \meta{choice} 定义 \cs{ifzzu@\meta{name}@\meta{choice}}。
   %
-  \kv@set@family@handler{hfut@choice}{%
-    \ifx\hfut@@default\@empty
-      \def\hfut@@default{##1}%
+  \kv@set@family@handler{zzu@choice}{%
+    \ifx\zzu@@default\@empty
+      \def\zzu@@default{##1}%
     \fi
-    \expandafter\newif\csname ifhfut@\@nameuse{hfut@#1@@name}@##1\endcsname
-    \expandafter\g@addto@macro\csname hfut@#1@@reset\endcsname{%
-      \@nameuse{hfut@\@nameuse{hfut@#1@@name}@##1false}%
+    \expandafter\newif\csname ifzzu@\@nameuse{zzu@#1@@name}@##1\endcsname
+    \expandafter\g@addto@macro\csname zzu@#1@@reset\endcsname{%
+      \@nameuse{zzu@\@nameuse{zzu@#1@@name}@##1false}%
     }%
   }%
-  \kvsetkeys@expandafter{hfut@choice}{\hfut@@choices}%
+  \kvsetkeys@expandafter{zzu@choice}{\zzu@@choices}%
   %
-  % 将 \meta{default} 赋值到 \cs{hfut@\meta{name}}，如果非空则执行相应的代码。
+  % 将 \meta{default} 赋值到 \cs{zzu@\meta{name}}，如果非空则执行相应的代码。
   %
-  \expandafter\let\csname hfut@\@nameuse{hfut@#1@@name}\endcsname\hfut@@default
-  \expandafter\ifx\csname hfut@\@nameuse{hfut@#1@@name}\endcsname\@empty\else
-    \@nameuse{hfut@#1@@check}%
+  \expandafter\let\csname zzu@\@nameuse{zzu@#1@@name}\endcsname\zzu@@default
+  \expandafter\ifx\csname zzu@\@nameuse{zzu@#1@@name}\endcsname\@empty\else
+    \@nameuse{zzu@#1@@check}%
   \fi
   %
-  % 定义 \cs{hfutsetup} 接口。
+  % 定义 \cs{zzusetup} 接口。
   %
-  \kv@define@key{hfut}{#1}{%
-    \@namedef{hfut@\@nameuse{hfut@#1@@name}}{##1}%
-    \@nameuse{hfut@#1@@check}%
-    \@nameuse{hfut@#1@@code}%
+  \kv@define@key{zzu}{#1}{%
+    \@namedef{zzu@\@nameuse{zzu@#1@@name}}{##1}%
+    \@nameuse{zzu@#1@@check}%
+    \@nameuse{zzu@#1@@code}%
   }%
 }
 
 % 定义接口向 |key| 添加 |code|：
 
-\newcommand\hfut@option@hook[2]{%
-  \expandafter\g@addto@macro\csname hfut@#1@@code\endcsname{#2}%
+\newcommand\zzu@option@hook[2]{%
+  \expandafter\g@addto@macro\csname zzu@#1@@code\endcsname{#2}%
 }
 
-\hfut@define@key{
+\zzu@define@key{
   degree = {
     choices = {
       doctor,
@@ -340,23 +340,23 @@
   },
 }
 
-\newif\ifhfut@degree@graduate
-\newcommand\hfut@set@graduate{%
-  \ifhfut@degree@bachelor
-    \hfut@degree@graduatefalse
+\newif\ifzzu@degree@graduate
+\newcommand\zzu@set@graduate{%
+  \ifzzu@degree@bachelor
+    \zzu@degree@graduatefalse
   \else
-    \hfut@degree@graduatetrue
+    \zzu@degree@graduatetrue
   \fi
 }
-\hfut@set@graduate
-\hfut@option@hook{degree}{%
-  \hfut@set@graduate
+\zzu@set@graduate
+\zzu@option@hook{degree}{%
+  \zzu@set@graduate
 }
 
 % 使用 \pkg{kvoptions} 提供的 key-value 接口，
 \SetupKeyvalOptions{
-  family  = hfut,
-  prefix  = hfut@,
+  family  = zzu,
+  prefix  = zzu@,
   setkeys = \kvsetkeys,
 }
 
@@ -366,22 +366,22 @@
 
 % 兼容旧版本的文档类选项。
 % Reserved for compatibility until 2020-07-01.
-\DeclareVoidOption{doctor}{\hfutsetup{degree=doctor}}
-\DeclareVoidOption{master}{\hfutsetup{degree=master}}
-\DeclareVoidOption{bachelor}{\hfutsetup{degree=bachelor}}
-\DeclareVoidOption{chinese}{\hfutsetup{language=chinese}}
-\DeclareVoidOption{english}{\hfutsetup{language=english}}
-\DeclareVoidOption{academic}{\hfutsetup{degree-type=academic}}
-\DeclareVoidOption{professional}{\hfutsetup{degree-type=professional}}
-\DeclareVoidOption{print}{\hfutsetup{output=print}}
-\DeclareVoidOption{pdf}{\hfutsetup{output=electronic}}
-\newif\ifhfut@legacy@cite@style
-\DeclareVoidOption{super}{\hfutsetup{cite-style=super}\hfut@legacy@cite@styletrue}
-\DeclareVoidOption{numbers}{\hfutsetup{cite-style=inline}\hfut@legacy@cite@styletrue}
-\DeclareVoidOption{authoryear}{\hfutsetup{cite-style=authoryear}\hfut@legacy@cite@styletrue}
-\DeclareVoidOption{arabic}{\hfutsetup{section-style=arabic}}
-\DeclareVoidOption{colorlogo}{\hfutsetup{badge-color=red}}
-\DeclareVoidOption{bwlogo}{\hfutsetup{badge-color=black}}
+\DeclareVoidOption{doctor}{\zzusetup{degree=doctor}}
+\DeclareVoidOption{master}{\zzusetup{degree=master}}
+\DeclareVoidOption{bachelor}{\zzusetup{degree=bachelor}}
+\DeclareVoidOption{chinese}{\zzusetup{language=chinese}}
+\DeclareVoidOption{english}{\zzusetup{language=english}}
+\DeclareVoidOption{academic}{\zzusetup{degree-type=academic}}
+\DeclareVoidOption{professional}{\zzusetup{degree-type=professional}}
+\DeclareVoidOption{print}{\zzusetup{output=print}}
+\DeclareVoidOption{pdf}{\zzusetup{output=electronic}}
+\newif\ifzzu@legacy@cite@style
+\DeclareVoidOption{super}{\zzusetup{cite-style=super}\zzu@legacy@cite@styletrue}
+\DeclareVoidOption{numbers}{\zzusetup{cite-style=inline}\zzu@legacy@cite@styletrue}
+\DeclareVoidOption{authoryear}{\zzusetup{cite-style=authoryear}\zzu@legacy@cite@styletrue}
+\DeclareVoidOption{arabic}{\zzusetup{section-style=arabic}}
+\DeclareVoidOption{colorlogo}{\zzusetup{badge-color=red}}
+\DeclareVoidOption{bwlogo}{\zzusetup{badge-color=black}}
 
 % 载入 \cls{ctexbook}。
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{ctexbook}}
@@ -390,13 +390,13 @@
 
 % \subsection{加载文档类和宏包}
 
-\ifhfut@openright
+\ifzzu@openright
   \PassOptionsToClass{openright}{book}
 \else
   \PassOptionsToClass{openany}{book}
 \fi
 
-\ifhfut@output@electronic
+\ifzzu@output@electronic
   \PassOptionsToClass{oneside}{book}
 \fi
 \PassOptionsToPackage{no-math}{fontspec}
@@ -432,56 +432,56 @@
 
 % 对冲突的宏包报错。
 \RequirePackage{filehook}
-\newcommand\hfut@package@conflict[2]{
+\newcommand\zzu@package@conflict[2]{
   \AtEndOfPackageFile*{#1}{%
     \AtBeginOfPackageFile*{#2}{%
-      \hfut@error{The "#2" package is incompatible with "#1"}%
+      \zzu@error{The "#2" package is incompatible with "#1"}%
     }%
   }%
 }
 
-\hfut@package@conflict{biblatex}{bibunits}
-\hfut@package@conflict{biblatex}{chapterbib}
-\hfut@package@conflict{biblatex}{cite}
-\hfut@package@conflict{biblatex}{multibib}
-\hfut@package@conflict{biblatex}{natbib}
+\zzu@package@conflict{biblatex}{bibunits}
+\zzu@package@conflict{biblatex}{chapterbib}
+\zzu@package@conflict{biblatex}{cite}
+\zzu@package@conflict{biblatex}{multibib}
+\zzu@package@conflict{biblatex}{natbib}
 
-\hfut@package@conflict{bibunits}{biblatex}
-\hfut@package@conflict{bibunits}{chapterbib}
-\hfut@package@conflict{bibunits}{multibib}
+\zzu@package@conflict{bibunits}{biblatex}
+\zzu@package@conflict{bibunits}{chapterbib}
+\zzu@package@conflict{bibunits}{multibib}
 
-\hfut@package@conflict{unicode-math}{amscd}
-\hfut@package@conflict{unicode-math}{amsfonts}
-\hfut@package@conflict{unicode-math}{amssymb}
-\hfut@package@conflict{unicode-math}{bbm}
-\hfut@package@conflict{unicode-math}{bm}
-\hfut@package@conflict{unicode-math}{eucal}
-\hfut@package@conflict{unicode-math}{eufrak}
-\hfut@package@conflict{unicode-math}{mathrsfs}
-\hfut@package@conflict{unicode-math}{newtxmath}
-\hfut@package@conflict{unicode-math}{upgreek}
+\zzu@package@conflict{unicode-math}{amscd}
+\zzu@package@conflict{unicode-math}{amsfonts}
+\zzu@package@conflict{unicode-math}{amssymb}
+\zzu@package@conflict{unicode-math}{bbm}
+\zzu@package@conflict{unicode-math}{bm}
+\zzu@package@conflict{unicode-math}{eucal}
+\zzu@package@conflict{unicode-math}{eufrak}
+\zzu@package@conflict{unicode-math}{mathrsfs}
+\zzu@package@conflict{unicode-math}{newtxmath}
+\zzu@package@conflict{unicode-math}{upgreek}
 
-\hfut@package@conflict{natbib}{biblatex}
-\hfut@package@conflict{natbib}{cite}
+\zzu@package@conflict{natbib}{biblatex}
+\zzu@package@conflict{natbib}{cite}
 
-\hfut@package@conflict{newtxmath}{amsfonts}
-\hfut@package@conflict{newtxmath}{amssymb}
-\hfut@package@conflict{newtxmath}{unicode-math}
-\hfut@package@conflict{newtxmath}{upgreek}
+\zzu@package@conflict{newtxmath}{amsfonts}
+\zzu@package@conflict{newtxmath}{amssymb}
+\zzu@package@conflict{newtxmath}{unicode-math}
+\zzu@package@conflict{newtxmath}{upgreek}
 
 
 % \pkg{mathtools} 需要在 \pkg{unicode-math} 前载入，
 % 参考 \url{https://tex.stackexchange.com/q/521394/82731}。
 \AtBeginOfPackageFile*{mathtools}{
   \@ifpackageloaded{unicode-math}{
-    \hfut@error{The "mathtools" package should be loaded before setting "math-font"}
+    \zzu@error{The "mathtools" package should be loaded before setting "math-font"}
   }{}
 }%
 
 % \pkg{amsthm} 需要在 \pkg{newtx} 前载入，参考 \pkg{newtx} 的文档。
 \AtBeginOfPackageFile*{amsthm}{
   \@ifpackageloaded{newtxmath}{
-    \hfut@error{The "amsthm" package should be loaded before setting "newtxmath"}
+    \zzu@error{The "amsthm" package should be loaded before setting "newtxmath"}
   }{}
 }%
 
@@ -489,22 +489,22 @@
 
 % \subsection{处理语言}
 
-% 定义 \cs{hfut@main@language}，当在导言区修改 \option{language} 时，
+% 定义 \cs{zzu@main@language}，当在导言区修改 \option{language} 时，
 % 保存为论文的主要语言；
-% \cs{hfut@reset@main@language} 则用于正文中恢复为主要语言。
+% \cs{zzu@reset@main@language} 则用于正文中恢复为主要语言。
 %    \begin{macrocode}
-\hfutsetup{main-language=\hfut@language}%
-\let\hfut@main@language\hfut@language
+\zzusetup{main-language=\zzu@language}%
+\let\zzu@main@language\zzu@language
 
-\hfut@option@hook{language}{%
+\zzu@option@hook{language}{%
   \ifx\@begindocumenthook\@undefined\else
-    \hfutsetup{main-language=\hfut@language}%
-    \let\hfut@main@language\hfut@language
+    \zzusetup{main-language=\zzu@language}%
+    \let\zzu@main@language\zzu@language
   \fi
 }
-\newcommand\hfut@reset@main@language{%
-  \hfutsetup{language = \hfut@main@language}%
-  \let\hfut@language\hfut@main@language
+\newcommand\zzu@reset@main@language{%
+  \zzusetup{language = \zzu@main@language}%
+  \let\zzu@language\zzu@main@language
 }
 
 % 带圈数字和星号使用中文字体。
@@ -516,8 +516,8 @@
 % U+201C、U+201D、U+2025、U+2026、U+2E3A，
 % 所以要根据语言设置正确的字体。
 % https://github.com/CTeX-org/ctex-kit/issues/389
-\newcommand\hfut@set@punctuations{%
-  \ifhfut@language@chinese
+\newcommand\zzu@set@punctuations{%
+  \ifzzu@language@chinese
     \xeCJKDeclareCharClass{FullLeft}{"2018, "201C}%
     \xeCJKDeclareCharClass{FullRight}{
       "00B7, "2019, "201D, "2013, "2014, "2025, "2026, "2E3A,
@@ -529,16 +529,16 @@
     }%
   \fi
 }
-\hfut@set@punctuations
-\hfut@option@hook{language}{\hfut@set@punctuations}
+\zzu@set@punctuations
+\zzu@option@hook{language}{\zzu@set@punctuations}
 
 % 根据语言设置各章节的名称，只有在导言区设置 \option{language} 时会修改，
 % 而在正文局部切换语言时则不变。
 
 % 由于《撰写手册》中的“speciality”一词使用的是英式拼法，
 % 所以“acknowledgements”也保持一致。
-\newcommand\hfut@set@chapter@names{%
-  \ifhfut@main@language@chinese
+\newcommand\zzu@set@chapter@names{%
+  \ifzzu@main@language@chinese
     \def\contentsname{目\hspace{\ccwd}录}%
     \def\listfigurename{插图清单}%
     \def\listtablename{表格清单}%
@@ -547,21 +547,21 @@
     }%
     \def\bibname{参考文献}%
     \def\appendixname{附录}%
-    \ifhfut@degree@bachelor
-      \def\hfut@acknowledgements@name{致谢}%
+    \ifzzu@degree@bachelor
+      \def\zzu@acknowledgements@name{致谢}%
     \else
-      \def\hfut@acknowledgements@name{致\hspace{\ccwd}谢}%
+      \def\zzu@acknowledgements@name{致\hspace{\ccwd}谢}%
     \fi
-    \ifhfut@degree@bachelor
-      \def\hfut@publication@name{攻读学士学位期间的学术活动及成果情况}%
+    \ifzzu@degree@bachelor
+      \def\zzu@publication@name{攻读学士学位期间的学术活动及成果情况}%
     \else
-      \ifhfut@degree@master
-        \def\hfut@publication@name{攻读硕士学位期间的学术活动及成果情况}%
+      \ifzzu@degree@master
+        \def\zzu@publication@name{攻读硕士学位期间的学术活动及成果情况}%
       \else
-        \def\hfut@publication@name{攻读博士学位期间的学术活动及成果情况}%
+        \def\zzu@publication@name{攻读博士学位期间的学术活动及成果情况}%
       \fi
     \fi
-    \newcommand\hfut@notation@name{符号说明}%
+    \newcommand\zzu@notation@name{符号说明}%
   \else
     \def\contentsname{Contents}%
     \def\listfigurename{List of Figures}%
@@ -571,17 +571,17 @@
     }%
     \def\bibname{Bibliography}%
     \def\appendixname{Appendix}%
-    \def\hfut@acknowledgements@name{Acknowledgements}%
-    \def\hfut@publication@name{Publications}%
-    \def\hfut@notation@name{Notation}%
+    \def\zzu@acknowledgements@name{Acknowledgements}%
+    \def\zzu@publication@name{Publications}%
+    \def\zzu@notation@name{Notation}%
   \fi
 }
-\hfut@set@chapter@names
-\hfut@option@hook{main-language}{\hfut@set@chapter@names}
+\zzu@set@chapter@names
+\zzu@option@hook{main-language}{\zzu@set@chapter@names}
 
 % 这部分名称在正文中局部地修改语言时会发生变化。
-\newcommand\hfut@set@names{%
-  \ifhfut@language@chinese
+\newcommand\zzu@set@names{%
+  \ifzzu@language@chinese
     \def\figurename{图}%
     \def\tablename{表}%
   \else
@@ -589,8 +589,8 @@
     \def\tablename{Tab}%
   \fi
 }
-\hfut@set@names
-\hfut@option@hook{language}{\hfut@set@names}
+\zzu@set@names
+\zzu@option@hook{language}{\zzu@set@names}
 
 
 % \subsection{字体}
@@ -622,8 +622,10 @@
 % \end{table}
 %
 % 注意重定义 \normalsize 应在 \pkg{unicode-math} 的 \cs{setmathfont} 前。
-\newcommand\hfut@set@font@size{%
-  \ifhfut@degree@graduate
+
+% 研究生字体相关
+\newcommand\zzu@set@font@size{%
+  \ifzzu@degree@graduate
     \renewcommand\normalsize{%
       \@setfontsize\normalsize{12bp}{20bp}%
       \abovedisplayskip 12bp \@plus3bp \@minus7bp%
@@ -647,42 +649,42 @@
       \MakeRobust\normalsize
   \fi
 }
-\hfut@set@font@size
-\hfut@option@hook{degree}{\hfut@set@font@size}
+\zzu@set@font@size
+\zzu@option@hook{degree}{\zzu@set@font@size}
 
 % 设置行距的倍数为 1。
 \linespread{1}\selectfont
 
 
 % 检测系统
-\ifhfut@system@auto
+\ifzzu@system@auto
   \IfFileExists{/System/Library/Fonts/Menlo.ttc}{
-    \hfutsetup{system = mac}
+    \zzusetup{system = mac}
   }{
     \IfFileExists{/dev/null}{
       \IfFileExists{null:}{
-        \hfutsetup{system = windows}
+        \zzusetup{system = windows}
       }{
-        \hfutsetup{system = unix}
+        \zzusetup{system = unix}
       }
     }{
-      \hfutsetup{system = windows}
+      \zzusetup{system = windows}
     }
   }
 \fi
 
 % 处理 \opt{fontset}
-\ifhfut@fontset@auto
-  \ifhfut@system@windows
-    \hfutsetup{fontset = windows}
+\ifzzu@fontset@auto
+  \ifzzu@system@windows
+    \zzusetup{fontset = windows}
   \else
-    \ifhfut@system@mac
-      \hfutsetup{fontset = mac}
+    \ifzzu@system@mac
+      \zzusetup{fontset = mac}
     \else
       \IfFontExistsTF{Noto Serif CJK SC}{
-        \hfutsetup{fontset = ubuntu}
+        \zzusetup{fontset = ubuntu}
       }{
-        \hfutsetup{fontset = fandol}
+        \zzusetup{fontset = fandol}
       }
     \fi
   \fi
@@ -691,23 +693,23 @@
 % 《撰写手册》要求西文字体使用 Times New Roman 和 Arial，
 % 但是在 Linux 下没有这两个字体，所以使用它们的克隆版 TeX Gyre Termes 和
 % TeX Gyre Heros。
-\ifhfut@font@auto
-  \ifhfut@fontset@windows
-    \hfutsetup{font=times}
+\ifzzu@font@auto
+  \ifzzu@fontset@windows
+    \zzusetup{font=times}
   \else
-    \ifhfut@fontset@mac
-      \hfutsetup{font=times}
+    \ifzzu@fontset@mac
+      \zzusetup{font=times}
     \else
-      \hfutsetup{font=termes}
+      \zzusetup{font=termes}
     \fi
   \fi
 \fi
 
 % Times New Roman + Arial
-\newcommand\hfut@set@font@times{%
+\newcommand\zzu@set@font@times{%
   \setmainfont{Times New Roman}%
   \setsansfont{Arial}%
-  \ifhfut@system@mac
+  \ifzzu@system@mac
     \setmonofont{Menlo}[Scale = MatchLowercase]%
   \else
     \setmonofont{Courier New}[Scale = MatchLowercase]%
@@ -715,7 +717,7 @@
 }
 
 % TeX Gyre Termes
-\newcommand\hfut@set@font@termes{%
+\newcommand\zzu@set@font@termes{%
   \setmainfont{texgyretermes}[
     Extension      = .otf,
     UprightFont    = *-regular,
@@ -723,10 +725,10 @@
     ItalicFont     = *-italic,
     BoldItalicFont = *-bolditalic,
   ]%
-  \hfut@set@texgyre@sans@mono
+  \zzu@set@texgyre@sans@mono
 }
 
-\newcommand\hfut@set@texgyre@sans@mono{%
+\newcommand\zzu@set@texgyre@sans@mono{%
   \setsansfont{texgyreheros}[
     Extension      = .otf,
     UprightFont    = *-regular,
@@ -749,107 +751,107 @@
 % STIX 文件名在 v2.10 2020-12-19 从
 % \file{STIX2Text-Regular.otf}、\file{STIX2Math.otf} 分别改为
 % \file{STIXTwoText-Regular.otf}、\file{STIXTwoMath-Regular.otf}。
-\let\hfut@font@family@stix\@empty
-\newcommand\hfut@set@stix@names{%
-  \ifx\hfut@font@family@stix\@empty
+\let\zzu@font@family@stix\@empty
+\newcommand\zzu@set@stix@names{%
+  \ifx\zzu@font@family@stix\@empty
     \IfFontExistsTF{STIXTwoText-Regular.otf}{%
-      \gdef\hfut@font@family@stix{STIXTwoText}%
-      \gdef\hfut@font@name@stix@math{STIXTwoMath-Regular}%
+      \gdef\zzu@font@family@stix{STIXTwoText}%
+      \gdef\zzu@font@name@stix@math{STIXTwoMath-Regular}%
     }{%
-      \gdef\hfut@font@family@stix{STIX2Text}%
-      \gdef\hfut@font@name@stix@math{STIX2Math}%
+      \gdef\zzu@font@family@stix{STIX2Text}%
+      \gdef\zzu@font@name@stix@math{STIX2Math}%
     }%
   \fi
 }
 
-\newcommand\hfut@set@font@stix{%
-  \hfut@set@stix@names
-  \setmainfont{\hfut@font@family@stix}[
+\newcommand\zzu@set@font@stix{%
+  \zzu@set@stix@names
+  \setmainfont{\zzu@font@family@stix}[
     Extension      = .otf,
     UprightFont    = *-Regular,
     BoldFont       = *-Bold,
     ItalicFont     = *-Italic,
     BoldItalicFont = *-BoldItalic,
   ]%
-  \hfut@set@texgyre@sans@mono
+  \zzu@set@texgyre@sans@mono
 }
 
 % XITS 字体。
 % XITS 的文件名在 v1.109 2018-09-30
 % 从 \file{xits-regular.otf}、\file{xits-math.otf} 分别改为
 % \file{XITS-Regular.otf}、\file{XITSMath-Regular.otf}。
-\let\hfut@font@family@xits\@empty
-\newcommand\hfut@set@xits@names{%
-  \ifx\hfut@font@family@xits\@empty
+\let\zzu@font@family@xits\@empty
+\newcommand\zzu@set@xits@names{%
+  \ifx\zzu@font@family@xits\@empty
     \IfFontExistsTF{XITSMath-Regular.otf}{%
-      \gdef\hfut@font@family@xits{XITS}%
-      \gdef\hfut@font@style@xits@rm{Regular}%
-      \gdef\hfut@font@style@xits@bf{Bold}%
-      \gdef\hfut@font@style@xits@it{Italic}%
-      \gdef\hfut@font@style@xits@bfit{BoldItalic}%
-      \gdef\hfut@font@name@xits@math{XITSMath-Regular}%
+      \gdef\zzu@font@family@xits{XITS}%
+      \gdef\zzu@font@style@xits@rm{Regular}%
+      \gdef\zzu@font@style@xits@bf{Bold}%
+      \gdef\zzu@font@style@xits@it{Italic}%
+      \gdef\zzu@font@style@xits@bfit{BoldItalic}%
+      \gdef\zzu@font@name@xits@math{XITSMath-Regular}%
     }{%
-      \gdef\hfut@font@family@xits{xits}%
-      \gdef\hfut@font@style@xits@rm{regular}%
-      \gdef\hfut@font@style@xits@bf{bold}%
-      \gdef\hfut@font@style@xits@it{italic}%
-      \gdef\hfut@font@style@xits@bfit{bolditalic}%
-      \gdef\hfut@font@name@xits@math{xits-math}%
+      \gdef\zzu@font@family@xits{xits}%
+      \gdef\zzu@font@style@xits@rm{regular}%
+      \gdef\zzu@font@style@xits@bf{bold}%
+      \gdef\zzu@font@style@xits@it{italic}%
+      \gdef\zzu@font@style@xits@bfit{bolditalic}%
+      \gdef\zzu@font@name@xits@math{xits-math}%
     }%
   \fi
 }
 
-\newcommand\hfut@set@font@xits{%
-  \hfut@set@xits@names
-  \setmainfont{\hfut@font@family@xits}[
+\newcommand\zzu@set@font@xits{%
+  \zzu@set@xits@names
+  \setmainfont{\zzu@font@family@xits}[
     Extension      = .otf,
-    UprightFont    = *-\hfut@font@style@xits@rm,
-    BoldFont       = *-\hfut@font@style@xits@bf,
-    ItalicFont     = *-\hfut@font@style@xits@it,
-    BoldItalicFont = *-\hfut@font@style@xits@bfit,
+    UprightFont    = *-\zzu@font@style@xits@rm,
+    BoldFont       = *-\zzu@font@style@xits@bf,
+    ItalicFont     = *-\zzu@font@style@xits@it,
+    BoldItalicFont = *-\zzu@font@style@xits@bfit,
   ]%
-  \hfut@set@texgyre@sans@mono
+  \zzu@set@texgyre@sans@mono
 }
 
 % Libertinus 的文件名在 v6.7 2019-04-03 从小写改为驼峰式，
 % 在大小写敏感的平台上需要进行判断。
-\let\hfut@font@family@libertinus\@empty
-\newcommand\hfut@set@libertinus@names{%
-  \ifx\hfut@font@family@libertinus\@empty
+\let\zzu@font@family@libertinus\@empty
+\newcommand\zzu@set@libertinus@names{%
+  \ifx\zzu@font@family@libertinus\@empty
     \IfFontExistsTF{LibertinusSerif-Regular.otf}{%
-      \gdef\hfut@font@family@libertinus@serif{LibertinusSerif}%
-      \gdef\hfut@font@family@libertinus@sans{LibertinusSans}%
-      \gdef\hfut@font@name@libertinus@math{LibertinusMath-Regular}%
-      \gdef\hfut@font@style@libertinus@rm{Regular}%
-      \gdef\hfut@font@style@libertinus@bf{Bold}%
-      \gdef\hfut@font@style@libertinus@it{Italic}%
-      \gdef\hfut@font@style@libertinus@bfit{BoldItalic}%
+      \gdef\zzu@font@family@libertinus@serif{LibertinusSerif}%
+      \gdef\zzu@font@family@libertinus@sans{LibertinusSans}%
+      \gdef\zzu@font@name@libertinus@math{LibertinusMath-Regular}%
+      \gdef\zzu@font@style@libertinus@rm{Regular}%
+      \gdef\zzu@font@style@libertinus@bf{Bold}%
+      \gdef\zzu@font@style@libertinus@it{Italic}%
+      \gdef\zzu@font@style@libertinus@bfit{BoldItalic}%
     }{%
-      \gdef\hfut@font@family@libertinus@serif{libertinusserif}%
-      \gdef\hfut@font@family@libertinus@sans{libertinussans}%
-      \gdef\hfut@font@name@libertinus@math{libertinusmath-regular}%
-      \gdef\hfut@font@style@libertinus@rm{regular}%
-      \gdef\hfut@font@style@libertinus@bf{bold}%
-      \gdef\hfut@font@style@libertinus@it{italic}%
-      \gdef\hfut@font@style@libertinus@bfit{bolditalic}%
+      \gdef\zzu@font@family@libertinus@serif{libertinusserif}%
+      \gdef\zzu@font@family@libertinus@sans{libertinussans}%
+      \gdef\zzu@font@name@libertinus@math{libertinusmath-regular}%
+      \gdef\zzu@font@style@libertinus@rm{regular}%
+      \gdef\zzu@font@style@libertinus@bf{bold}%
+      \gdef\zzu@font@style@libertinus@it{italic}%
+      \gdef\zzu@font@style@libertinus@bfit{bolditalic}%
     }%
   \fi
 }
 
-\newcommand\hfut@set@font@libertinus{%
-  \hfut@set@libertinus@names
-  \setmainfont{\hfut@font@family@libertinus@serif}[
+\newcommand\zzu@set@font@libertinus{%
+  \zzu@set@libertinus@names
+  \setmainfont{\zzu@font@family@libertinus@serif}[
     Extension      = .otf,
-    UprightFont    = *-\hfut@font@style@libertinus@rm,
-    BoldFont       = *-\hfut@font@style@libertinus@bf,
-    ItalicFont     = *-\hfut@font@style@libertinus@it,
-    BoldItalicFont = *-\hfut@font@style@libertinus@bfit,
+    UprightFont    = *-\zzu@font@style@libertinus@rm,
+    BoldFont       = *-\zzu@font@style@libertinus@bf,
+    ItalicFont     = *-\zzu@font@style@libertinus@it,
+    BoldItalicFont = *-\zzu@font@style@libertinus@bfit,
   ]%
-  \setsansfont{\hfut@font@family@libertinus@sans}[
+  \setsansfont{\zzu@font@family@libertinus@sans}[
     Extension      = .otf,
-    UprightFont    = *-\hfut@font@style@libertinus@rm,
-    BoldFont       = *-\hfut@font@style@libertinus@bf,
-    ItalicFont     = *-\hfut@font@style@libertinus@it,
+    UprightFont    = *-\zzu@font@style@libertinus@rm,
+    BoldFont       = *-\zzu@font@style@libertinus@bf,
+    ItalicFont     = *-\zzu@font@style@libertinus@it,
   ]%
   \setmonofont{lmmonolt10}[
     Extension      = .otf,
@@ -861,7 +863,7 @@
 }
 
 % New Computer Modern
-\newcommand\hfut@set@font@newcm{%
+\newcommand\zzu@set@font@newcm{%
   \setmainfont{NewCM10}[
     Extension      = .otf,
     UprightFont    = *-Book,
@@ -886,7 +888,7 @@
 }
 
 % Latin Modern
-\newcommand\hfut@set@font@lm{%
+\newcommand\zzu@set@font@lm{%
   \setmainfont{lmroman10}[
     Extension      = .otf,
     UprightFont    = *-regular,
@@ -910,35 +912,35 @@
   ]%
 }
 
-\newcommand\hfut@set@font@newtx{%
+\newcommand\zzu@set@font@newtx{%
   \RequirePackage{newtxtext}%
 }
 
-\newcommand\hfut@set@font{%
-  \@nameuse{hfut@set@font@\hfut@font}%
+\newcommand\zzu@set@font{%
+  \@nameuse{zzu@set@font@\zzu@font}%
 }
-\hfut@set@font
-\hfut@option@hook{font}{\hfut@set@font}
+\zzu@set@font
+\zzu@option@hook{font}{\zzu@set@font}
 
 % 中文字体
-\ifhfut@cjk@font@auto
-  \ifhfut@fontset@mac
-    \hfutsetup{cjk-font = mac}
+\ifzzu@cjk@font@auto
+  \ifzzu@fontset@mac
+    \zzusetup{cjk-font = mac}
   \else
-    \ifhfut@fontset@windows
-      \hfutsetup{cjk-font = windows}
+    \ifzzu@fontset@windows
+      \zzusetup{cjk-font = windows}
     \else
-      \ifhfut@fontset@ubuntu
-        \hfutsetup{cjk-font = noto}
+      \ifzzu@fontset@ubuntu
+        \zzusetup{cjk-font = noto}
       \else
-        \hfutsetup{cjk-font = fandol}
+        \zzusetup{cjk-font = fandol}
       \fi
     \fi
   \fi
 \fi
 
 % Windows 的中易字体。
-\newcommand\hfut@set@cjk@font@windows{%
+\newcommand\zzu@set@cjk@font@windows{%
   \xeCJKsetup{EmboldenFactor=2}
   \setCJKmainfont{SimSun}[
     AutoFakeBold = true,
@@ -953,7 +955,7 @@
 }
 
 % macOS 的华文字体。
-\newcommand\hfut@set@cjk@font@mac{%
+\newcommand\zzu@set@cjk@font@mac{%
   \defaultCJKfontfeatures{}%
   \setCJKmainfont{Songti SC}[
     UprightFont    = * Light,
@@ -988,7 +990,7 @@
 
 % 思源字体。
 % 注意 Noto CJK 的 regular 字重名字不带“Regular”。
-\newcommand\hfut@set@cjk@font@noto{%
+\newcommand\zzu@set@cjk@font@noto{%
   \defaultCJKfontfeatures{}%
   \setCJKmainfont{Noto Serif CJK SC}[
     UprightFont    = * Light,
@@ -1024,7 +1026,7 @@
 }
 
 % Fandol 字体。
-\newcommand\hfut@set@cjk@font@fandol{%
+\newcommand\zzu@set@cjk@font@fandol{%
   \defaultCJKfontfeatures{}%
   \setCJKmainfont{FandolSong}[
     Extension   = .otf,
@@ -1062,25 +1064,25 @@
   ]%
 }
 
-\ifhfut@cjk@font@none\else
+\ifzzu@cjk@font@none\else
   \providecommand\songti{\CJKfamily{zhsong}}
   \providecommand\heiti{\CJKfamily{zhhei}}
   \providecommand\fangsong{\CJKfamily{zhfs}}
   \providecommand\kaishu{\CJKfamily{zhkai}}
 \fi
 
-\newcommand\hfut@set@cjk@font{%
-  \@nameuse{hfut@set@cjk@font@\hfut@cjk@font}%
+\newcommand\zzu@set@cjk@font{%
+  \@nameuse{zzu@set@cjk@font@\zzu@cjk@font}%
 }
-\hfut@set@cjk@font
-\hfut@option@hook{cjk-font}{\hfut@set@cjk@font}
+\zzu@set@cjk@font
+\zzu@option@hook{cjk-font}{\zzu@set@cjk@font}
 
 % 数学字体
 
 % 设置数学符号风格。
-\newcommand\hfut@set@math@style{%
-  \ifhfut@math@style@TeX
-    \hfutsetup{
+\newcommand\zzu@set@math@style{%
+  \ifzzu@math@style@TeX
+    \zzusetup{
       uppercase-greek    = upright,
       less-than-or-equal = horizontal,
       integral           = slanted,
@@ -1090,21 +1092,21 @@
       real-part          = fraktur,
     }%
   \else
-    \hfutsetup{
+    \zzusetup{
       uppercase-greek = italic,
       integral        = upright,
       integral-limits = true,
       partial         = upright,
       real-part       = roman,
     }%
-    \ifhfut@math@style@ISO
-      \hfutsetup{
+    \ifzzu@math@style@ISO
+      \zzusetup{
         less-than-or-equal = horizontal,
         math-ellipsis      = lower,
       }%
     \else
-      \ifhfut@math@style@GB
-        \hfutsetup{
+      \ifzzu@math@style@GB
+        \zzusetup{
           less-than-or-equal = slanted,
           math-ellipsis      = centered,
         }%
@@ -1113,41 +1115,41 @@
   \fi
 }
 
-\ifhfut@main@language@chinese
-  \hfutsetup{math-style = GB}%
+\ifzzu@main@language@chinese
+  \zzusetup{math-style = GB}%
 \else
-  \hfutsetup{math-style = TeX}%
+  \zzusetup{math-style = TeX}%
 \fi
 
-\hfut@set@math@style
-\hfut@option@hook{math-style}{\hfut@set@math@style}
-\hfut@option@hook{main-language}{%
-  \ifhfut@main@language@chinese
-    \hfutsetup{math-style = GB}%
+\zzu@set@math@style
+\zzu@option@hook{math-style}{\zzu@set@math@style}
+\zzu@option@hook{main-language}{%
+  \ifzzu@main@language@chinese
+    \zzusetup{math-style = GB}%
   \else
-    \hfutsetup{math-style = TeX}%
+    \zzusetup{math-style = TeX}%
   \fi
 }
 
 % 针对 \pkg{unicode-math} 逐项配置数学符号。
 
-\newcommand\hfut@set@unimath@leq{%
-  \ifhfut@leq@horizontal
+\newcommand\zzu@set@unimath@leq{%
+  \ifzzu@leq@horizontal
     \ifx\@begindocumenthook\@undefined
-      \let\le\hfut@save@leq
-      \let\ge\hfut@save@geq
-      \let\leq\hfut@save@leq
-      \let\geq\hfut@save@geq
+      \let\le\zzu@save@leq
+      \let\ge\zzu@save@geq
+      \let\leq\zzu@save@leq
+      \let\geq\zzu@save@geq
     \else
       \AtBeginDocument{%
-        \let\le\hfut@save@leq
-        \let\ge\hfut@save@geq
-        \let\leq\hfut@save@leq
-        \let\geq\hfut@save@geq
+        \let\le\zzu@save@leq
+        \let\ge\zzu@save@geq
+        \let\leq\zzu@save@leq
+        \let\geq\zzu@save@geq
       }%
     \fi
   \else
-    \ifhfut@leq@slanted
+    \ifzzu@leq@slanted
       \ifx\@begindocumenthook\@undefined
         \let\le\leqslant
         \let\ge\geqslant
@@ -1164,8 +1166,8 @@
     \fi
   \fi
 }
-\newcommand\hfut@set@unimath@integral@limits{%
-  \ifhfut@integral@limits@true
+\newcommand\zzu@set@unimath@integral@limits{%
+  \ifzzu@integral@limits@true
     \removenolimits{%
       \int\iint\iiint\iiiint\oint\oiint\oiiint
       \intclockwise\varointclockwise\ointctrclockwise\sumint
@@ -1183,62 +1185,62 @@
     }%
   \fi
 }
-\newcommand\hfut@set@unimath@ellipsis{%
-  \ifhfut@math@ellipsis@centered
+\newcommand\zzu@set@unimath@ellipsis{%
+  \ifzzu@math@ellipsis@centered
     \DeclareRobustCommand\mathellipsis{\mathinner{\unicodecdots}}%
   \else
     \DeclareRobustCommand\mathellipsis{\mathinner{\unicodeellipsis}}%
   \fi
 }
-\newcommand\hfut@set@unimath@real@part{%
-  \ifhfut@real@part@roman
+\newcommand\zzu@set@unimath@real@part{%
+  \ifzzu@real@part@roman
     \AtBeginDocument{%
       \def\Re{\operatorname{Re}}%
       \def\Im{\operatorname{Im}}%
     }%
   \else
     \AtBeginDocument{%
-      \let\Re\hfut@save@Re
-      \let\Im\hfut@save@Im
+      \let\Re\zzu@save@Re
+      \let\Im\zzu@save@Im
     }%
   \fi
 }
 
-\newcommand\hfut@set@unimath@style{%
-  \ifhfut@uppercase@greek@upright
+\newcommand\zzu@set@unimath@style{%
+  \ifzzu@uppercase@greek@upright
     \unimathsetup{math-style = TeX}%
   \else
-    \ifhfut@uppercase@greek@italic
+    \ifzzu@uppercase@greek@italic
       \unimathsetup{math-style = ISO}%
     \fi
   \fi
-  \ifhfut@math@style@TeX
+  \ifzzu@math@style@TeX
     \unimathsetup{bold-style = TeX}%
   \else
     \unimathsetup{bold-style = ISO}%
   \fi
-  \hfut@set@unimath@leq
-  \hfut@set@unimath@integral@limits
-  \ifhfut@partial@upright
+  \zzu@set@unimath@leq
+  \zzu@set@unimath@integral@limits
+  \ifzzu@partial@upright
     \unimathsetup{partial = upright}%
   \else
-    \ifhfut@partial@italic
+    \ifzzu@partial@italic
       \unimathsetup{partial = italic}%
     \fi
   \fi
-  \hfut@set@unimath@ellipsis
-  \hfut@set@unimath@real@part
+  \zzu@set@unimath@ellipsis
+  \zzu@set@unimath@real@part
 }
 
-\newcommand\hfut@qed{\rule{1ex}{1ex}}
-\newcommand\hfut@load@unimath{%
+\newcommand\zzu@qed{\rule{1ex}{1ex}}
+\newcommand\zzu@load@unimath{%
   \@ifpackageloaded{unicode-math}{}{%
     \RequirePackage{unicode-math}%
     \AtBeginDocument{%
-      \let\hfut@save@leq\leq
-      \let\hfut@save@geq\geq
-      \let\hfut@save@Re\Re
-      \let\hfut@save@Im\Im
+      \let\zzu@save@leq\leq
+      \let\zzu@save@geq\geq
+      \let\zzu@save@Re\Re
+      \let\zzu@save@Im\Im
     }%
     %
     % 兼容旧的粗体命令：\pkg{bm} 的 \cs{bm} 和 \pkg{amsmath} 的 \cs{boldsymbol}。
@@ -1253,18 +1255,18 @@
     }%
     %
     % 兼容 \pkg{amsthm} 的 \cs{qedsymbol}。
-    \renewcommand\hfut@qed{\ensuremath{\QED}}%
+    \renewcommand\zzu@qed{\ensuremath{\QED}}%
   }%
 }
 
 % STIX Two Math
-\newcommand\hfut@set@math@font@stix{%
-  \hfut@set@stix@names
-  \setmathfont{\hfut@font@name@stix@math}[
+\newcommand\zzu@set@math@font@stix{%
+  \zzu@set@stix@names
+  \setmathfont{\zzu@font@name@stix@math}[
     Extension    = .otf,
-    StylisticSet = \hfut@xits@integral@stylistic@set,
+    StylisticSet = \zzu@xits@integral@stylistic@set,
   ]%
-  \setmathfont{\hfut@font@name@stix@math}[
+  \setmathfont{\zzu@font@name@stix@math}[
     Extension    = .otf,
     StylisticSet = 1,
     range        = {scr,bfscr},
@@ -1272,18 +1274,18 @@
 }
 
 % XITS Math
-\newcommand\hfut@xits@integral@stylistic@set{%
-  \ifhfut@integral@upright
+\newcommand\zzu@xits@integral@stylistic@set{%
+  \ifzzu@integral@upright
     8%
   \fi
 }
-\newcommand\hfut@set@math@font@xits{%
-  \hfut@set@xits@names
-  \setmathfont{\hfut@font@name@xits@math}[
+\newcommand\zzu@set@math@font@xits{%
+  \zzu@set@xits@names
+  \setmathfont{\zzu@font@name@xits@math}[
     Extension    = .otf,
-    StylisticSet = \hfut@xits@integral@stylistic@set,
+    StylisticSet = \zzu@xits@integral@stylistic@set,
   ]%
-  \setmathfont{\hfut@font@name@xits@math}[
+  \setmathfont{\zzu@font@name@xits@math}[
     Extension    = .otf,
     StylisticSet = 1,
     range        = {cal,bfcal},
@@ -1291,34 +1293,34 @@
 }
 
 % Libertinus Math
-\newcommand\hfut@libertinus@integral@stylistic@set{%
-  \ifhfut@integral@slanted
+\newcommand\zzu@libertinus@integral@stylistic@set{%
+  \ifzzu@integral@slanted
     8%
   \fi
 }
-\newcommand\hfut@set@math@font@libertinus{%
-  \hfut@set@libertinus@names
-  \hfut@set@xits@names
-  \setmathfont{\hfut@font@name@libertinus@math}[
+\newcommand\zzu@set@math@font@libertinus{%
+  \zzu@set@libertinus@names
+  \zzu@set@xits@names
+  \setmathfont{\zzu@font@name@libertinus@math}[
     Extension    = .otf,
-    StylisticSet = \hfut@libertinus@integral@stylistic@set,
+    StylisticSet = \zzu@libertinus@integral@stylistic@set,
   ]%
-  \setmathfont{\hfut@font@name@xits@math}[
+  \setmathfont{\zzu@font@name@xits@math}[
     Extension    = .otf,
     range        = {\checkmark},
   ]%
 }
 
 % New Computer Modern Math
-\newcommand\hfut@newcm@integral@stylistic@set{%
-  \ifhfut@integral@upright
+\newcommand\zzu@newcm@integral@stylistic@set{%
+  \ifzzu@integral@upright
     2%
   \fi
 }
-\newcommand\hfut@set@math@font@newcm{%
+\newcommand\zzu@set@math@font@newcm{%
   \setmathfont{NewCMMath-Book}[
     Extension    = .otf,
-    StylisticSet = \hfut@newcm@integral@stylistic@set,
+    StylisticSet = \zzu@newcm@integral@stylistic@set,
   ]%
   \setmathfont{NewCMMath-Book}[
     Extension    = .otf,
@@ -1349,7 +1351,7 @@
 }
 
 % Latin Modern Math
-\newcommand\hfut@set@math@font@lm{%
+\newcommand\zzu@set@math@font@lm{%
   \setmathfont{latinmodern-math}[Extension=.otf]%
   \setmathrm{lmroman10}[
     Extension      = .otf,
@@ -1376,82 +1378,82 @@
 
 % NewTX Math
 % 注意 NewTX Math 是 Type 1 字体，如果正文西文使用了 OpenType 字体时需要小心处理。
-\newcommand\hfut@set@math@font@newtx{%
-  \ifhfut@font@newtx\else
-    \let\hfut@save@encodingdefault\encodingdefault
-    \let\hfut@save@rmdefault\rmdefault
-    \let\hfut@save@sfdefault\sfdefault
-    \let\hfut@save@ttdefault\ttdefault
+\newcommand\zzu@set@math@font@newtx{%
+  \ifzzu@font@newtx\else
+    \let\zzu@save@encodingdefault\encodingdefault
+    \let\zzu@save@rmdefault\rmdefault
+    \let\zzu@save@sfdefault\sfdefault
+    \let\zzu@save@ttdefault\ttdefault
     \RequirePackage[T1]{fontenc}%
     \renewcommand{\rmdefault}{ntxtlf}%
     \renewcommand{\sfdefault}{qhv}%
     \renewcommand{\ttdefault}{ntxtt}%
   \fi
-  \ifhfut@uppercase@greek@italic
+  \ifzzu@uppercase@greek@italic
     \PassOptionsToPackage{slantedGreek}{newtxmath}%
   \fi
-  \ifhfut@integral@upright
+  \ifzzu@integral@upright
     \PassOptionsToPackage{upint}{newtxmath}%
   \fi
   \RequirePackage{newtxmath}
-  \let\hfut@save@leq\leq
-  \let\hfut@save@geq\geq
-  \ifhfut@leq@slanted
+  \let\zzu@save@leq\leq
+  \let\zzu@save@geq\geq
+  \ifzzu@leq@slanted
     \let\le\leqslant
     \let\ge\geqslant
     \let\leq\leqslant
     \let\geq\geqslant
   \fi
-  \ifhfut@integral@limits@true
+  \ifzzu@integral@limits@true
     \let\ilimits@\displaylimits
   \fi
-  \let\hfut@save@partial\partial
-  \ifhfut@partial@upright
+  \let\zzu@save@partial\partial
+  \ifzzu@partial@upright
     \let\partial\uppartial
   \fi
-  \ifhfut@math@ellipsis@centered
+  \ifzzu@math@ellipsis@centered
     \DeclareRobustCommand\mathellipsis{\mathinner{\cdotp\cdotp\cdotp}}%
   \else
     \DeclareRobustCommand\mathellipsis{\mathinner{\ldotp\ldotp\ldotp}}%
   \fi
-  \let\hfut@save@Re\Re
-  \let\hfut@save@Im\Im
-  \ifhfut@real@part@roman
+  \let\zzu@save@Re\Re
+  \let\zzu@save@Im\Im
+  \ifzzu@real@part@roman
     \def\Re{\operatorname{Re}}%
     \def\Im{\operatorname{Im}}%
   \fi
   \RequirePackage{bm}%
-  \ifhfut@font@newtx\else
-    \let\encodingdefault\hfut@save@encodingdefault
-    \let\rmdefault\hfut@save@rmdefault
-    \let\sfdefault\hfut@save@sfdefault
-    \let\ttdefault\hfut@save@ttdefault
+  \ifzzu@font@newtx\else
+    \let\encodingdefault\zzu@save@encodingdefault
+    \let\rmdefault\zzu@save@rmdefault
+    \let\sfdefault\zzu@save@sfdefault
+    \let\ttdefault\zzu@save@ttdefault
   \fi
   \DeclareRobustCommand\symup[1]{{\mathrm{##1}}}%
   \DeclareRobustCommand\symbf[1]{{\bm{##1}}}%
   \let\increment\upDelta%
-  \renewcommand\hfut@qed{\openbox}%
+  \renewcommand\zzu@qed{\openbox}%
 }
 
-\newcommand\hfut@set@math@font{%
-  \ifhfut@math@font@none\else
-    \ifhfut@math@font@newtx
-      \hfut@set@math@font@newtx
+\newcommand\zzu@set@math@font{%
+  \ifzzu@math@font@none\else
+    \ifzzu@math@font@newtx
+      \zzu@set@math@font@newtx
     \else
-      \hfut@load@unimath
-      \hfut@set@unimath@style
-      \@nameuse{hfut@set@math@font@\hfut@math@font}%
+      \zzu@load@unimath
+      \zzu@set@unimath@style
+      \@nameuse{zzu@set@math@font@\zzu@math@font}%
     \fi
   \fi
 }
-\hfut@option@hook{math-font}{\g@addto@macro\hfut@setup@hook{\hfut@set@math@font}}
-\newcommand\hfut@set@math@font@auto{%
-  \ifhfut@math@font@auto
-    \hfutsetup{math-font=xits}%
+\zzu@option@hook{math-font}{\g@addto@macro\zzu@setup@hook{\zzu@set@math@font}}
+\newcommand\zzu@set@math@font@auto{%
+  \ifzzu@math@font@auto
+    \zzusetup{math-font=xits}%
   \fi
 }
-\AtBeginOfPackageFile*{siunitx}{\hfut@set@math@font@auto}
-\AtEndPreamble{\hfut@set@math@font@auto}
+\AtBeginOfPackageFile*{siunitx}{\zzu@set@math@font@auto}
+\AtEndPreamble{\zzu@set@math@font@auto}
 
 
 
@@ -1487,19 +1489,19 @@
   % 页眉与该部分的章标题相同，宋体 10.5 磅（五号）居中、1.5倍行距。
   % 页码：宋体 10.5 磅、页面下脚居中。
   % 页眉上下页边距1.5 cm
-  \def\hfut@hf@font{\fontsize{10.5bp}{20.475bp}\selectfont}
-  \ifhfut@degree@graduate
+  \def\zzu@hf@font{\fontsize{10.5bp}{20.475bp}\selectfont}
+  \ifzzu@degree@graduate
     
-    \fancyhead[OC]{\hfut@hf@font\leftmark}%
-    \ifhfut@degree@doctor
-      \fancyhead[EC]{\hfut@hf@font 合肥工业大学博士研究生学位论文}%
+    \fancyhead[OC]{\zzu@hf@font\leftmark}%
+    \ifzzu@degree@doctor
+      \fancyhead[EC]{\zzu@hf@font 合肥工业大学博士研究生学位论文}%
     \else
-      \fancyhead[EC]{\hfut@hf@font 合肥工业大学\hfut@degreetype@name 研究生学位论文}%
+      \fancyhead[EC]{\zzu@hf@font 合肥工业大学\zzu@degreetype@name 研究生学位论文}%
     \fi
-    \fancyfoot[C]{\hfut@hf@font\thepage}%
+    \fancyfoot[C]{\zzu@hf@font\thepage}%
     \let\@mkboth\markboth
     \def\chaptermark##1{%
-      \markboth{\CTEXifname{\CTEXthechapter\quad}{}\hfut@spacetitle{##1}}{}%
+      \markboth{\CTEXifname{\CTEXthechapter\quad}{}\zzu@spacetitle{##1}}{}%
     }%
     \let\sectionmark\@gobble
   \else
@@ -1507,8 +1509,8 @@
     % 本科生要求在正文每面上部加页眉，
     % 用五号字（10.5 bp）标注“合肥工业大学毕业设计（论文）”，居中；
     % 从正文页开始在每面底部居中用小五宋体（10.5 bp）连续编页码。
-    \fancyhead[C]{\hfut@hf@font 合肥工业大学毕业设计（论文）}%
-    \fancyfoot[C]{\hfut@hf@font\thepage}%
+    \fancyhead[C]{\zzu@hf@font 合肥工业大学毕业设计（论文）}%
+    \fancyfoot[C]{\zzu@hf@font\thepage}%
     \let\@mkboth\@gobbletwo
     \let\chaptermark\@gobble
     \let\sectionmark\@gobble
@@ -1534,7 +1536,7 @@
 \renewcommand\frontmatter{%
   \cleardoublepage
   \@mainmatterfalse
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \pagestyle{plain}%
     \pagenumbering{Roman}%
   \else
@@ -1545,7 +1547,7 @@
 
 % 研究生要求“第 1 章”要另页起，但是本科生要求另面起。
 \renewcommand\mainmatter{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \cleardoublepage
     \pagenumbering{arabic}%
   \else
@@ -1558,25 +1560,25 @@
 
 % 研究生要求"参考文献"起 无页眉，但是本科生仍然有页眉。
 \renewcommand\backmatter{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \clearpage
     \pagestyle{plain}%
   \else
     \clearpage
   \fi
-  \hfut@appendixfalse
+  \zzu@appendixfalse
 }
 
 \g@addto@macro\appendix{
   \renewcommand\thechapter{\@arabic\c@chapter}
   \@mainmattertrue
-  \hfut@appendixtrue
+  \zzu@appendixtrue
 }%
 % \subsection{附录}
 % fakeTODO 处理附录编号问题
 % 研究生附录按照附录1、附录2编号；[数学学院本科生附录不编号，请将以下`\renewcommand\appendix` 取消注释]
 % \renewcommand\appendix{%
-%   \ifhfut@degree@bachelor
+%   \ifzzu@degree@bachelor
 %     \ctexset{
 %       chapter/numbering=false,
 %       chapter/format = \centering\rmfamily\bfseries\fontsize{18bp}{18bp}\selectfont,
@@ -1593,7 +1595,7 @@
 % \subsection{封面}
 
 % 定义用户接口：
-\hfut@define@key{
+\zzu@define@key{
   ugtype = {
     default = {论文},
   },
@@ -1620,7 +1622,7 @@
   speciality = {
     default = {专业},
   },
-  hfuteryear = {
+  zzueryear = {
     default = {2017级},
   },
   research = {
@@ -1696,122 +1698,122 @@
 % 导师一栏可能有多个姓名，所以用 \opt{supervisor} 进行收集，
 % 然后使用本命令来输出要求的格式，
 % 类似于 \LaTeX3 的 \cs{clist\_use:Nn}。
-\newcommand\hfut@clist@count[1]{%
+\newcommand\zzu@clist@count[1]{%
   \csname clist_count:N\endcsname{#1}%
 }
-\newcommand\hfut@clist@use[2]{%
+\newcommand\zzu@clist@use[2]{%
   \csname clist_use:Nn\endcsname{#1}{#2}%
 }
-\newcommand\hfut@supervisor@names{%
-  \hfut@clist@use{\hfut@supervisor}{\quad}
+\newcommand\zzu@supervisor@names{%
+  \zzu@clist@use{\zzu@supervisor}{\quad}
 }
-\newcommand\hfut@advisor@names{%
-  \hfut@clist@use{\hfut@advisor}{\quad}
+\newcommand\zzu@advisor@names{%
+  \zzu@clist@use{\zzu@advisor}{\quad}
 }
 
-% 输出日期的给定格式：\cs{hfut@format@date}\marg{format}\marg{date}，
+% 输出日期的给定格式：\cs{zzu@format@date}\marg{format}\marg{date}，
 % 其中格式 \meta{format} 接受三个参数分别对应年、月、日，
 % \meta{date} 是 （yyyy-m）。
-\newcommand\hfut@format@date[2]{%
-  \edef\hfut@@date{#2}%
-  \def\hfut@@process@date##1-##2\@nil{%
+\newcommand\zzu@format@date[2]{%
+  \edef\zzu@@date{#2}%
+  \def\zzu@@process@date##1-##2\@nil{%
     #1{##1}{##2}%
   }%
-  \expandafter\hfut@@process@date\hfut@@date\@nil
+  \expandafter\zzu@@process@date\zzu@@date\@nil
 }
-\newcommand\hfut@date@format@zh[2]{#1 年 \number#2 月}
-\newcommand\hfut@date@month[1]{%
+\newcommand\zzu@date@format@zh[2]{#1 年 \number#2 月}
+\newcommand\zzu@date@month[1]{%
   \ifcase\number#1\or
     January\or February\or March\or April\or May\or June\or
     July\or August\or September\or October\or November\or December%
   \fi
 }
-\newcommand\hfut@date@format@en[2]{\hfut@date@month{#2}, #1}
-\newcommand\hfut@date@zh{\hfut@format@date{\hfut@date@format@zh}{\hfut@date}}
-\newcommand\hfut@date@en{\hfut@format@date{\hfut@date@format@en}{\hfut@date}}
+\newcommand\zzu@date@format@en[2]{\zzu@date@month{#2}, #1}
+\newcommand\zzu@date@zh{\zzu@format@date{\zzu@date@format@zh}{\zzu@date}}
+\newcommand\zzu@date@en{\zzu@format@date{\zzu@date@format@en}{\zzu@date}}
 
-% 版本 v3.2 开始使用 \cs{hfutsetup} 设置接口，
+% 版本 v3.2 开始使用 \cs{zzusetup} 设置接口，
 % 兼容旧版本的命令式设置。
 % Reserved for compatibility until 2020-07-01.
-\def\hfut@define@term#1#2{%
+\def\zzu@define@term#1#2{%
   \expandafter\gdef\csname #1\endcsname##1{%
-    \hfutsetup{#2 = {##1}}%
+    \zzusetup{#2 = {##1}}%
   }%
 }
-\hfut@define@term{title}{title}
-\hfut@define@term{entitle}{title*}
-\hfut@define@term{author}{author}
-\hfut@define@term{enauthor}{author*}
-\hfut@define@term{major}{speciality}
-\hfut@define@term{supervisor}{supervisor}
+\zzu@define@term{title}{title}
+\zzu@define@term{entitle}{title*}
+\zzu@define@term{author}{author}
+\zzu@define@term{enauthor}{author*}
+\zzu@define@term{major}{speciality}
+\zzu@define@term{supervisor}{supervisor}
 \gdef\cosupervisor#1{%
-  \g@addto@macro\hfut@supervisor{, #1}%
+  \g@addto@macro\zzu@supervisor{, #1}%
 }
-\gdef\date#1{\renewcommand\hfut@date@zh{#1}}
-\gdef\endate#1{\renewcommand\hfut@date@en{#1}}
-\hfut@define@term{professionaltype}{professional-type}
-\hfut@define@term{enprofessionaltype}{professional-type*}
-\hfut@define@term{secretlevel}{secret-level}
-\hfut@define@term{ensecretlevel}{secret-level*}
-\hfut@define@term{secretyear}{secret-year}
-\gdef\keywords#1{\renewcommand\hfut@keywords@text{#1}}
-\gdef\enkeywords#1{\renewcommand\hfut@keywords@en@text{#1}}
+\gdef\date#1{\renewcommand\zzu@date@zh{#1}}
+\gdef\endate#1{\renewcommand\zzu@date@en{#1}}
+\zzu@define@term{professionaltype}{professional-type}
+\zzu@define@term{enprofessionaltype}{professional-type*}
+\zzu@define@term{secretlevel}{secret-level}
+\zzu@define@term{ensecretlevel}{secret-level*}
+\zzu@define@term{secretyear}{secret-year}
+\gdef\keywords#1{\renewcommand\zzu@keywords@text{#1}}
+\gdef\enkeywords#1{\renewcommand\zzu@keywords@en@text{#1}}
 
 % 定义一些常量。
-\ifhfut@degree@doctor
-  \newcommand\hfut@thesis@name{博士学位论文}
-  \newcommand\hfut@degreetype@name{博士}
-  \newcommand\hfut@thesis@name@en{A Dissertation Submitted to \par
+\ifzzu@degree@doctor
+  \newcommand\zzu@thesis@name{博士学位论文}
+  \newcommand\zzu@degreetype@name{博士}
+  \newcommand\zzu@thesis@name@en{A Dissertation Submitted to \par
   Hefei University of Technology \par
   in accordmance with the requirement \par
   for the Degree of Doctor of Philosophy}
-  \newcommand\hfut@thesis@name@encover{DOCTORAL DISSERTATION}
+  \newcommand\zzu@thesis@name@encover{DOCTORAL DISSERTATION}
 \else
-  \ifhfut@degree@master
-    \newcommand\hfut@thesis@name{硕士学位论文}
-    \newcommand\hfut@thesis@name@en{A Dissertation Submitted for the Degree of Maste}
-    \newcommand\hfut@thesis@name@encover{MASTER'S DISSERTATION}
+  \ifzzu@degree@master
+    \newcommand\zzu@thesis@name{硕士学位论文}
+    \newcommand\zzu@thesis@name@en{A Dissertation Submitted for the Degree of Maste}
+    \newcommand\zzu@thesis@name@encover{MASTER'S DISSERTATION}
   \else
-    \newcommand\hfut@thesis@name{本科毕业设计（论文）}
-    \newcommand\hfut@thesis@name@en{A Dissertation Submitted for the Degree of Bachelor}
-    \newcommand\hfut@thesis@name@encover{UNDERGRADUATE THESIS}
+    \newcommand\zzu@thesis@name{本科毕业设计（论文）}
+    \newcommand\zzu@thesis@name@en{A Dissertation Submitted for the Degree of Bachelor}
+    \newcommand\zzu@thesis@name@encover{UNDERGRADUATE THESIS}
   \fi
 \fi
 
-\ifhfut@degree@master
-  \ifhfut@degree@type@academic
-    \newcommand\hfut@degreetype@name{学历硕士}
+\ifzzu@degree@master
+  \ifzzu@degree@type@academic
+    \newcommand\zzu@degreetype@name{学历硕士}
   \else
-    \newcommand\hfut@degreetype@name{专业硕士}
+    \newcommand\zzu@degreetype@name{专业硕士}
   \fi
 \fi
 
-\ifhfut@degree@type@academic
-  \ifhfut@degree@doctor
-    \newcommand\hfut@speciality@name{学科专业}
+\ifzzu@degree@type@academic
+  \ifzzu@degree@doctor
+    \newcommand\zzu@speciality@name{学科专业}
   \else
-    \newcommand\hfut@speciality@name{专业名称}
+    \newcommand\zzu@speciality@name{专业名称}
   \fi
 \else
-  \ifhfut@cjk@font@mac
+  \ifzzu@cjk@font@mac
     \providecommand\lishu{\CJKfamily{zhli}}
   \else
-    \ifhfut@cjk@font@windows
+    \ifzzu@cjk@font@windows
       \setCJKfamilyfont{zhli}{LiSu}
       \providecommand\lishu{\CJKfamily{zhli}}
     \else
-      \hfut@warning{LiShu font is required}
+      \zzu@warning{LiShu font is required}
       \providecommand\lishu{\sffamily}
     \fi
   \fi
-  \newcommand\hfut@speciality@name{专业名称}
+  \newcommand\zzu@speciality@name{专业名称}
 \fi
 
 % 定义校徽颜色
-\definecolor{hfutred}{cmyk}{0.3,1,0.95,0.05}
+\definecolor{zzured}{cmyk}{0.3,1,0.95,0.05}
 
 % 添加 PDF 书签，在 \pkg{hyperref} 载入后才有效。
-\newcommand\hfut@pdfbookmark{\@gobble}
+\newcommand\zzu@pdfbookmark{\@gobble}
 
 % 重定义 \env{titlepage} 环境，不修改页码。
 \renewenvironment{titlepage}{%
@@ -1835,140 +1837,172 @@
 % 作者姓名宋体 16 磅，单倍行距；
 % 注意这里的“单倍行距”的地方开启了“对齐到网格”，所以实际行距有所偏差，
 % 所以只能使用直尺测量。
-\newcommand\hfut@speciality@sse{软件工程}
+\newcommand\zzu@speciality@sse{软件工程}
 % 生成空的下划线
-\newcommand\hfut@underline[2][3.4cm]{\underline{\hb@xt@ #1{\hss#2\hss}}}
-\newcommand\hfut@makecover{%
-  \hfutsetup{language=chinese}%
+\newcommand\zzu@underline[2][4.1cm]{\underline{\hb@xt@ #1{\hss#2\hss}}}
+
+
+% 生成封面
+\newcommand\zzu@makecover{%
+  \zzusetup{language=chinese}%
   \begin{titlepage}%
-    \hfut@pdfbookmark{封面}%
+    \zzu@pdfbookmark{封面}%
     \centering
-    \ifhfut@degree@bachelor
-      \ifx\hfut@secret@level\@empty
+    %---------------------------------------->
+    \ifzzu@degree@bachelor
+      \ifx\zzu@secret@level\@empty
         {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-        学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-        密\hspace{1em}级：\hfut@underline{公开} \par}
+        学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+        密\hspace{1em}级：\zzu@underline{公开} \par}
       \else
         {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-        学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-        密\hspace{1em}级：\hfut@underline{\hfut@secret@level\bigstar\hfut@secret@year} \par}
+        学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+        密\hspace{1em}级：\zzu@underline{\zzu@secret@level\bigstar\zzu@secret@year} \par}
       \fi
       \vskip 1.15cm%
     \else
-      \ifx\hfut@secret@level\@empty
-        {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-        单位代码：\hfut@underline{10359} \hfill
-        密\hspace{1em}级：\hfut@underline{公开} \par
-        学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-        分类号：\hfut@underline{\hfut@clc} \par}
+      \ifx\zzu@secret@level\@empty
+        \text{}
+        \vskip 0.7cm
+        %{\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
+       % 授予单位代码 \zzu@underline{10459} 
+        %密\hspace{1em}级：\zzu@underline{公开} \par
+        %学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+        %分类号：\zzu@underline{\zzu@clc} \par}
+        {\sffamily\fangsong\fontsize{14bp}{20bp}\selectfont
+        \hfill 授予单位代码 \zzu@underline{10459} \par
+        \hfill 学号或申请号 \zzu@underline{\zzu@stuID} \par
+        \hfill 密\hspace{4em}级 \zzu@underline{公开} \par
+        }
       \else
         {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-        单位代码：\hfut@underline{10359} \hfill
-        密\hspace{1em}级：\hfut@underline{\hfut@secret@level\bigstar\hfut@secret@year} \par
-        学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-        分类号：\hfut@underline{\hfut@clc} \par}
+        单位代码：\zzu@underline{10359} \hfill
+        密\hspace{1em}级：\zzu@underline{\zzu@secret@level\bigstar\zzu@secret@year} \par
+        学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+        分类号：\zzu@underline{\zzu@clc} \par}
       \fi
-      \vskip 1.8cm%
+      \vskip 3.0cm%
     \fi
+    %-------------------------------------->
+    {\songti\fontsize{22bp}{22bp}\selectfont 郑\hspace{1em}州\hspace{1em}大\hspace{1em}学\par}
+    \vskip 0.30cm
+    {\songti\fontsize{22bp}{22bp}\selectfont 硕\hspace{1em}士\hspace{1em}学\hspace{1em}位\hspace{1em}论\hspace{1em}文\par}
+    % \includegraphics[height=1.4cm]{figures/zzu-name.pdf}\par
+    % \vskip 0.3cm
+    % {\bfseries\fontsize{22bp}{22bp}\selectfont Hefei University of Technology\par}
+    \vskip 4.45cm
 
-    \includegraphics[height=1.4cm]{figures/hfut-name.pdf}\par
-    \vskip 0.3cm
-    {\bfseries\fontsize{22bp}{22bp}\selectfont Hefei University of Technology\par}
-    \ifhfut@degree@bachelor
+    %本科to
+    %-------------------------------------->do
+    \ifzzu@degree@bachelor
       \vskip 1.1cm%
       {\sffamily\bfseries\fontsize{42bp}{42bp}\selectfont
-      \hfut@thesis@name\par}%
+      \zzu@thesis@name\par}%
       \vskip 0.6cm
-    \else
-      \vskip 1.0cm%
-      {\sffamily\bfseries\fontsize{48bp}{48bp}\selectfont
-      \hfut@thesis@name\par}%
-      \vskip 0.5cm
+    \else %涉及到硕士学位论文四个大字
+      % \vskip 1.0cm%
+      % {\sffamily\bfseries\fontsize{48bp}{48bp}\selectfont
+      % \zzu@thesis@name\par}%
+      % \vskip 0.5cm
     \fi
-    {\bfseries\fontsize{22bp}{22bp}\selectfont
-    \hfut@thesis@name@encover \par}%
-    \ifhfut@degree@master
-      \vskip 3.5cm
+    %-------------------------------------->
+
+
+    %{\bfseries\fontsize{22bp}{22bp}\selectfont
+    %\zzu@thesis@name@encover \par}%
+    \ifzzu@degree@master
+      %\vskip 3.5cm
     \else
       \vskip 0.9cm%
-      \includegraphics[height=3.6cm]{figures/hfut-badge.pdf}%
+      \includegraphics[height=3.6cm]{figures/zzu-badge.pdf}%
     \fi
-    \ifhfut@degree@bachelor
-      \vskip 1.5cm
-    \else
-      \vskip 2.3cm
-    \fi
+
+    % \ifzzu@degree@bachelor
+    %   \vskip 1.5cm
+    % \else
+    %   \vskip 2.3cm
+    % \fi
+
     \renewcommand\arraystretch{1.75}
-    \ifhfut@degree@bachelor
+    \ifzzu@degree@bachelor
       {\fontsize{16bp}{20bp}\selectfont
       \begin{tabular}{>{\fontsize{16bp}{20bp}\rmfamily\bfseries\selectfont}l>{\rmfamily\fontsize{16bp}{20bp}\selectfont}c}%
-        类\hspace{2\ccwd}型：& \hfut@ugtype \\
+        类\hspace{2\ccwd}型：& \zzu@ugtype \\
         \cline{2-2}
-        题\hspace{2\ccwd}目：& \hfut@title \\
+        题\hspace{2\ccwd}目：& \zzu@title \\
         \cline{2-2}
-        \hfut@speciality@name：& \hfut@speciality\\
+        \zzu@speciality@name：& \zzu@speciality\\
         \cline{2-2}
-        入学年份：& \hfut@hfuteryear \\
+        入学年份：& \zzu@zzueryear \\
         \cline{2-2}
-        学生姓名：& \hfut@author \\
+        学生姓名：& \zzu@author \\
         \cline{2-2}
-        指导教师：& \hfut@supervisor@names \\
+        指导教师：& \zzu@supervisor@names \\
         \cline{2-2}
-        系\hspace{0.5\ccwd}名\hspace{0.5\ccwd}称：& \hfut@department \\
+        系\hspace{0.5\ccwd}名\hspace{0.5\ccwd}称：& \zzu@department \\
         \cline{2-2}
-        完成时间：& \hfut@date@zh \\
+        完成时间：& \zzu@date@zh \\
         \cline{2-2}
       \end{tabular}\par}%
     \else
-      \begin{tabular}{>{\rmfamily\bfseries\fontsize{16bp}{20bp}\selectfont}lp{8.5cm}}%
-        论文题目：& \multirow[t]{2}{8.5cm}{
-          \centering\linespread{1.75}\fontsize{16bp}{20bp}\selectfont
-          \hfut@title} \\
-        \cline{2-2}
-                & \\
-        \cline{2-2}
+      \begin{tabular}{>{\songti\fontsize{14bp}{20bp}\selectfont}lp{8.5cm}}%
+        论\hspace{1em}文\hspace{1em}题\hspace{1em}目：& \multirow[t]{2}{8.5cm}{
+          \centering\linespread{1.75}\fontsize{14bp}{20bp}\selectfont
+          \zzu@title} \\
+         \cline{2-2}
+        %        & \\
+        % \cline{2-2}
       \end{tabular}
-      \renewcommand\arraystretch{1.75}
-      \begin{tabular}{>{\bfseries\fontsize{16bp}{20bp}\selectfont}l>{\centering\arraybackslash\fontsize{16bp}{20bp}\selectfont}p{8.5cm}}
-        \ifhfut@degree@master
-          学位类别：& \hfut@degreetype@name\\
-          \cline{2-2}
-        \fi
-        \hfut@speciality@name：& \hfut@speciality\\
+
+      \renewcommand\arraystretch{1.5}
+
+      \begin{tabular}{>{\songti\fontsize{14bp}{20bp}\selectfont}l>{\centering\arraybackslash\fontsize{14bp}{20bp}\selectfont}p{8.5cm}}
+        % \ifzzu@degree@master
+        %   学位类别：& \zzu@degreetype@name\\
+        %   \cline{2-2}
+        % \fi
+        %\zzu@speciality@name：& \zzu@speciality\\
+        %\cline{2-2}
+        作\hspace{1em}者\hspace{1em}姓\hspace{1em}名：& \zzu@author \\
         \cline{2-2}
-        作者姓名：& \hfut@author \\
+        学\hspace{1em}科\hspace{1em}门\hspace{1em}类：& 工学 \\
         \cline{2-2}
-        导师姓名：& \hfut@supervisor@names \\
+        专\hspace{1em}业\hspace{1em}方\hspace{1em}向：& \zzu@speciality\\
         \cline{2-2}
-        完成时间：& \hfut@date@zh \\
+        导师姓名、职称：& \zzu@supervisor@names \\
         \cline{2-2}
+        % 完成时间：& \zzu@date@zh \\
+        % \cline{2-2}
       \end{tabular}\par%
+      \vspace{4.0cm}
+      {\heiti\fontsize{16bp}{16bp}\selectfont
+      年\hspace{2em}月\hspace{2em}日\par}
       \fi
       \renewcommand\arraystretch{1}
   \end{titlepage}%
-  \hfut@reset@main@language
+  \zzu@reset@main@language
 }
 
 \newcommand{\underlineFixlen}[2][4.85cm]{\underline{\makebox[#1][c]{#2}}}
 
 % 博士学位论文 题名页
-\newcommand\hfut@makephdtitle{%
-  \hfutsetup{language=chinese}%
+\newcommand\zzu@makephdtitle{%
+  \zzusetup{language=chinese}%
   \begin{titlepage}%
-    \hfut@pdfbookmark{题名页}%
+    \zzu@pdfbookmark{题名页}%
     \centering
-    \ifx\hfut@secret@level\@empty
+    \ifx\zzu@secret@level\@empty
       {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-      单位代码：\hfut@underline{10359} \hfill
-      密\hspace{1em}级：\hfut@underline{公开} \par
-      学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-      分类号：\hfut@underline{\hfut@clc} \par}
+      单位代码：\zzu@underline{10359} \hfill
+      密\hspace{1em}级：\zzu@underline{公开} \par
+      学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+      分类号：\zzu@underline{\zzu@clc} \par}
     \else
       {\sffamily\bfseries\fontsize{12bp}{20bp}\selectfont
-      单位代码：\hfut@underline{10359} \hfill
-      密\hspace{1em}级：\hfut@underline{\hfut@secret@level\bigstar\hfut@secret@year} \par
-      学\hspace{2\ccwd}号：\hfut@underline{\hfut@stuID} \hfill
-      分类号：\hfut@underline{\hfut@clc} \par}
+      单位代码：\zzu@underline{10359} \hfill
+      密\hspace{1em}级：\zzu@underline{\zzu@secret@level\bigstar\zzu@secret@year} \par
+      学\hspace{2\ccwd}号：\zzu@underline{\zzu@stuID} \hfill
+      分类号：\zzu@underline{\zzu@clc} \par}
     \fi
     
     \vskip 2.1cm
@@ -1979,7 +2013,7 @@
     \begin{tabular}{@{}p{11.4cm}@{}}%
         \multirow[t]{2}{11.4cm}{
         \centering\linespread{1.5}\bfseries\fontsize{16bp}{24bp}\selectfont
-        \hfut@title} \\
+        \zzu@title} \\
       \cline{1-1}
               \\
       \cline{1-1}
@@ -1987,126 +2021,126 @@
     \vskip 1.5cm%
     {\linespread{1.25}
     \bfseries\fontsize{16bp}{16bp}\selectfont
-    \uline{\hfut@title@en}\par}%
+    \uline{\zzu@title@en}\par}%
     \vskip 3.5cm%
     {\linespread{1.5}\fontsize{15bp}{15bp}\selectfont
-      \textbf{作者姓名：}\underlineFixlen{\hfut@author} \hfill \textbf{导师姓名：}\underlineFixlen{\hfut@supervisor@names} \par
-      \textbf{申请学位：}\underlineFixlen{\hfut@applydegree} \hfill \textbf{培养单位：}\underlineFixlen{\hfut@school} \par
-      \textbf{学科专业：}\underlineFixlen{\hfut@speciality} \hfill \textbf{研究方向：}\underlineFixlen{\hfut@research} \par
-      \textbf{提交日期：}\underlineFixlen{\hfut@date@zh} \hfill \textbf{答辩日期：}\underlineFixlen{\hfut@defensedate} \par
+      \textbf{作者姓名：}\underlineFixlen{\zzu@author} \hfill \textbf{导师姓名：}\underlineFixlen{\zzu@supervisor@names} \par
+      \textbf{申请学位：}\underlineFixlen{\zzu@applydegree} \hfill \textbf{培养单位：}\underlineFixlen{\zzu@school} \par
+      \textbf{学科专业：}\underlineFixlen{\zzu@speciality} \hfill \textbf{研究方向：}\underlineFixlen{\zzu@research} \par
+      \textbf{提交日期：}\underlineFixlen{\zzu@date@zh} \hfill \textbf{答辩日期：}\underlineFixlen{\zzu@defensedate} \par
     }
     \vskip 1.3cm
     \renewcommand\arraystretch{1.5}
     \begin{tabular}{@{}>{\fontsize{15bp}{22.5bp}\selectfont}p{15.9cm}@{}}%
-      \textbf{答辩委员会主席：} \hfut@phd@chairman \\
+      \textbf{答辩委员会主席：} \zzu@phd@chairman \\
       \cline{1-1}
-      \textbf{评\hspace{2\ccwd}阅\hspace{2\ccwd}人：} \hfut@phd@member  \\
+      \textbf{评\hspace{2\ccwd}阅\hspace{2\ccwd}人：} \zzu@phd@member  \\
       \cline{1-1}
     \end{tabular}
     \renewcommand\arraystretch{1}
     \vfill
 
-    {\fontsize{15bp}{15bp}\selectfont\hfut@date@zh}
+    {\fontsize{15bp}{15bp}\selectfont\zzu@date@zh}
 
   \end{titlepage}%
 }
 
 
-\newcommand\hfut@makezhtitle{%
-  \hfutsetup{language=chinese}%
+\newcommand\zzu@makezhtitle{%
+  \zzusetup{language=chinese}%
   \begin{titlepage}%
-    \hfut@pdfbookmark{中文内封页}%
+    \zzu@pdfbookmark{中文内封页}%
     \centering
     {\sffamily\fontsize{22bp}{40bp}\selectfont
       合\hspace{1.5\ccwd}肥\hspace{1.5\ccwd}工\hspace{1.5\ccwd}业\hspace{1.5\ccwd}大\hspace{1.5\ccwd}学\par}%
     \vskip 1.8cm%
-    \ifhfut@degree@master
+    \ifzzu@degree@master
       {\sffamily\bfseries\fontsize{22bp}{30bp}\selectfont
-      \hfut@degreetype@name 学位论文\par}% 空格不可忽略
+      \zzu@degreetype@name 学位论文\par}% 空格不可忽略
     \else
       {\sffamily\bfseries\fontsize{22bp}{30bp}\selectfont
-      \hfut@thesis@name\par}%
+      \zzu@thesis@name\par}%
     \fi
     \vskip 1.8cm%
     {\bfseries\fontsize{22bp}{30bp}\selectfont
-    \hfut@title\par}%
-    \ifhfut@degree@bachelor
+    \zzu@title\par}%
+    \ifzzu@degree@bachelor
       \vskip 6.5cm
     \else
       \vskip 8cm%
     \fi
       \begin{tabular}{>{\fontsize{16bp}{16bp}\rmfamily\bfseries\selectfont}l>{\centering\arraybackslash\fontsize{16bp}{16bp}\rmfamily\selectfont}p{8.4cm}}%
-        \ifhfut@degree@bachelor
-          学生姓名：& \hfut@author \\
+        \ifzzu@degree@bachelor
+          学生姓名：& \zzu@author \\
           \cline{2-2}\\
-          学生学号：& \hfut@stuID \\
+          学生学号：& \zzu@stuID \\
           \cline{2-2}\\
-          指导教师：& \hfut@supervisor@names \\
+          指导教师：& \zzu@supervisor@names \\
           \cline{2-2}\\
-          \hfut@speciality@name：& \hfut@speciality\\
+          \zzu@speciality@name：& \zzu@speciality\\
           \cline{2-2}\\
-          系\hspace{0.5\ccwd}名\hspace{0.5\ccwd}称：& \hfut@department \\
+          系\hspace{0.5\ccwd}名\hspace{0.5\ccwd}称：& \zzu@department \\
           \cline{2-2}
         \else
-          \ifhfut@degree@doctor
-            作者姓名：& \hfut@author\\
+          \ifzzu@degree@doctor
+            作者姓名：& \zzu@author\\
             \cline{2-2}\\
-            申请学位：& \hfut@applydegree \\
+            申请学位：& \zzu@applydegree \\
             \cline{2-2}\\
-            研究方向：& \hfut@research \\
+            研究方向：& \zzu@research \\
             \cline{2-2}\\
-            \hfut@speciality@name：& \hfut@speciality\\
+            \zzu@speciality@name：& \zzu@speciality\\
             \cline{2-2}\\
-            指导教师：& \hfut@supervisor@names \\
+            指导教师：& \zzu@supervisor@names \\
             \cline{2-2}
           \else
-            \ifx\hfut@advisor\@empty
-              作者姓名：& \hfut@author \\
+            \ifx\zzu@advisor\@empty
+              作者姓名：& \zzu@author \\
               \cline{2-2}\\
-              指导教师：& \hfut@supervisor@names \\
+              指导教师：& \zzu@supervisor@names \\
               \cline{2-2}\\
-              学科专业：& \hfut@speciality \\
+              学科专业：& \zzu@speciality \\
               \cline{2-2}\\
-              研究方向：& \hfut@research \\
+              研究方向：& \zzu@research \\
               \cline{2-2}
             \else
-              作者姓名：& \hfut@author \\
+              作者姓名：& \zzu@author \\
               \cline{2-2}\\
-              指导教师：& \hfut@supervisor@names \\
+              指导教师：& \zzu@supervisor@names \\
               \cline{2-2}\\
-                & \hfut@advisor@names \\
+                & \zzu@advisor@names \\
               \cline{2-2}\\
-              专业名称：& \hfut@speciality \\
+              专业名称：& \zzu@speciality \\
               \cline{2-2}\\
-              研究方向：& \hfut@research \\
+              研究方向：& \zzu@research \\
               \cline{2-2}
             \fi
           \fi
         \fi
     \end{tabular}\par%
     \vfill
-    {\fontsize{15bp}{15bp}\selectfont\hfut@date@zh}
+    {\fontsize{15bp}{15bp}\selectfont\zzu@date@zh}
   \end{titlepage}%
-  \hfut@reset@main@language
+  \zzu@reset@main@language
 }
 
 % 英文内封页
-\newcommand\hfut@makeentitle{%
-  \hfutsetup{language=english}%
+\newcommand\zzu@makeentitle{%
+  \zzusetup{language=english}%
   \begin{titlepage}%
-    \hfut@pdfbookmark{English inner cover}%
+    \zzu@pdfbookmark{English inner cover}%
     \centering
     \vspace*{0.5cm}%
     {\fontsize{16bp}{30bp}\selectfont
-    \hfut@thesis@name@en\par}%
+    \zzu@thesis@name@en\par}%
     \vskip 2.0cm%
     {\bfseries\fontsize{18bp}{30bp}\selectfont
-    \hfut@title@en\par}%
+    \zzu@title@en\par}%
     \vskip 1.2cm%
     {\fontsize{16bp}{30bp}\selectfont
     By\par
-    \hfut@author@en\par}%
-    \ifhfut@degree@doctor
+    \zzu@author@en\par}%
+    \ifzzu@degree@doctor
       \vskip 7.0cm
     \else
       \vskip 10.0cm
@@ -2114,52 +2148,55 @@
     {\fontsize{16bp}{31bp}\selectfont
     Hefei University of Technology\par
     Hefei, Anhui, P.R.China\par
-    \hfut@date@en\par}%
+    \zzu@date@en\par}%
   \end{titlepage}%
-  \hfut@reset@main@language
+  \zzu@reset@main@language
 }
 
-% 重新定义 \cs{maketitle}，调用 \cs{hfut@makezhtitle}, \cs{hfut@makeentitle}
+% 重新定义 \cs{maketitle}，调用 \cs{zzu@makezhtitle}, \cs{zzu@makeentitle}
 % 分别生成封面，中、英文标题页。
 \renewcommand\maketitle{%
+  \include{demo.pdf}
   \newgeometry{margin=2.54cm}%
   \pagenumbering{Alph}%
   \pagestyle{empty}%
-  \hfut@makecover
-  \ifhfut@degree@doctor
-    \hfut@makephdtitle
+  \zzu@makecover
+
+  \ifzzu@degree@doctor
+    \zzu@makephdtitle
   \fi
-  \hfut@makezhtitle
-  \hfut@makeentitle
+
+  \zzu@makezhtitle
+  \zzu@makeentitle
   \restoregeometry
   \pagestyle{plain}%
 }
 
 \newcommand\signaturepage{%
   \begin{titlepage}%
-    \hfut@pdfbookmark{答辩委员签名页}%
+    \zzu@pdfbookmark{答辩委员签名页}%
     \null
     {\centering\sffamily\bfseries\fontsize{22bp}{33bp}\selectfont
     合\hspace{0.5\ccwd}肥\hspace{0.5\ccwd}工\hspace{0.5\ccwd}业\hspace{0.5\ccwd}大\hspace{0.5\ccwd}学\par}
     \vskip 0.8cm
     {\fontsize{16bp}{30bp}\selectfont
-    本论文经答辩委员会全体委员审查，确认符合合肥工业大学\hfut@degreetype@name 学位论文质量要求。\par}
+    本论文经答辩委员会全体委员审查，确认符合合肥工业大学\zzu@degreetype@name 学位论文质量要求。\par}
     \vskip 2.5cm
     {\centering\fontsize{16bp}{24bp}\selectfont
     \textbf{答辩委员会签名（工作单位、职称、姓名）}\par}
     \vskip 1.0cm
     {\fontsize{16bp}{16bp}\selectfont
-    主席：\hfut@sign@chairman \par}
+    主席：\zzu@sign@chairman \par}
     \vskip 1.0cm
     {\fontsize{16bp}{16bp}\selectfont
-    委员：\parbox[t]{10.5cm}{\linespread{2.0}\selectfont\hfut@sign@member} \par}
+    委员：\parbox[t]{10.5cm}{\linespread{2.0}\selectfont\zzu@sign@member} \par}
     \vfill
     {\fontsize{16bp}{16bp}\selectfont
-    导师：\hfut@sign@supervisor }
+    导师：\zzu@sign@supervisor }
   \end{titlepage}%
 }
 
-\ifhfut@degree@bachelor
+\ifzzu@degree@bachelor
   \let\signaturepage\relax
 \fi
 % Reserved for compatibility until 2020-07-01.
@@ -2169,7 +2206,7 @@
 % \subsection{原创性声明}
 
 % 定义原创性声明
-\newcommand\hfut@originality@master{%
+\newcommand\zzu@originality@master{%
   本人郑重声明：所呈交的学位论文是本人在导师指导下进行独立研究
   工作所取得的成果。据我所知，除了文中特别加以标注和致谢的内容
   外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为
@@ -2177,7 +2214,7 @@
   其他教育机构的学位或证书而使用过的材料。对本文成果做出贡献的
   个人和集体，本人已在论文中作了明确的说明，并表示谢意。\par%
   学位论文中表达的观点纯属作者本人观点，与合肥工业大学无关。}
-\newcommand\hfut@authorization@master{%
+\newcommand\zzu@authorization@master{%
   本学位论文作者完全了解\underline{\hspace{0.5\ccwd}合肥工业大学\hspace{0.5\ccwd}}有关保留、使用学位论文%
   的规定，即：除保密期内的涉密学位论文外，学校有权保存并向国家%
   有关部门或机构送交论文的复印件和电子光盘，允许论文被查阅或借%
@@ -2186,7 +2223,7 @@
   学位论文。\par%
   （保密的学位论文在解密后适用本授权书）}
 
-\newcommand\hfut@originality@bachelor{%
+\newcommand\zzu@originality@bachelor{%
   本人郑重声明：所呈交的毕业设计（论文）是本人在指导教师指导下
   进行独立研究工作所取得的成果。据我所知，除了文中特别加以标注
   和致谢的内容外，设计（论文）中不包含其他人已经发表或撰写过的
@@ -2194,7 +2231,7 @@
   其他教育机构的学位或证书而使用过的材料。对本文成果做出贡献的
   个人和集体，本人已在设计（论文）中作了明确的说明，并表示谢意。\par%
   毕业设计（论文）中表达的观点纯属作者本人观点，与合肥工业大学无关。}
-\newcommand\hfut@authorization@bachelor{%
+\newcommand\zzu@authorization@bachelor{%
   本学位论文作者完全了解\underline{\hspace{0.5\ccwd}合肥工业大学\hspace{0.5\ccwd}}有关保留、使用毕业设计（论文）的规定，即：除保密期内的涉密设计（论文）外，学校有权
   保存并向国家有关部门或机构送交设计（论文）的复印件和电子光盘，
   允许设计（论文）被查阅或借阅。本人授权\underline{\hspace{0.5\ccwd}合肥工业大学\hspace{0.5\ccwd}}可以将本毕业设计（论文）的全部或部分内容编入有关数据库，允许采用影
@@ -2205,14 +2242,14 @@
 
 \newcommand\copyrightpage{%
   \begin{titlepage}%
-    \hfut@pdfbookmark{原创性和授权使用声明}%
+    \zzu@pdfbookmark{原创性和授权使用声明}%
     \null
     \renewcommand\arraystretch{1.5}
-    \ifhfut@degree@bachelor
+    \ifzzu@degree@bachelor
       {\centering\sffamily\fontsize{18bp}{18bp}\selectfont
       \textbf{毕业设计（论文）独创性声明}\par}%
       \vskip 1.0cm%
-      \hfut@originality@bachelor\par
+      \zzu@originality@bachelor\par
       \vskip 0.9cm%
       毕业设计（论文）作者签名：\hfill%
       签字日期：\hspace{3\ccwd}年\hspace{2\ccwd}月\hspace{2\ccwd}日\par
@@ -2220,7 +2257,7 @@
       {\centering\sffamily\fontsize{18bp}{18bp}\selectfont
       \textbf{毕业设计（论文）版权使用授权书}\par}%
       \vskip 1.0cm%
-      \hfut@authorization@bachelor\par
+      \zzu@authorization@bachelor\par
       \vskip 1.0cm%
       \begin{tabular}{@{}p{6.5cm}p{6.5cm}@{}}%
         学位论文作者签名：& 指导教师签名：\\
@@ -2230,7 +2267,7 @@
       {\centering\sffamily\fontsize{18bp}{18bp}\selectfont
       \textbf{学位论文独创性声明}\par}%
       \vskip 1.25cm%
-      \hfut@originality@master\par
+      \zzu@originality@master\par
       \vskip 1.1cm%
       学位论文作者签名：\hfill%
       签字日期：\hspace{3\ccwd}年\hspace{2\ccwd}月\hspace{2\ccwd}日\par
@@ -2238,7 +2275,7 @@
       {\centering\sffamily\fontsize{18bp}{18bp}\selectfont
       \textbf{学位论文版权使用授权书}\par}%
       \vskip 1.25cm%
-      \hfut@authorization@master\par
+      \zzu@authorization@master\par
       \vskip 1.2cm%
       \begin{tabular}{@{}p{6.5cm}p{6.5cm}@{}}%
         学位论文作者签名：& 指导教师签名：\\
@@ -2269,12 +2306,12 @@
 % 研究生规定章题为两字时中间空两字，三字时空一字，四字时空半字，四字以上不空。
 % 这里用 \LaTeX3 的 \cs{str\_count:N} 判断字数。
 % 注意，\pkg{stringstrings} 宏包会导致范数命令 \verb+\|+ 被修改。
-\newcount\hfut@titlelength
-\DeclareRobustCommand\hfut@spacetitle[1]{%
-  \hfut@titlelength=\csname str_count:N\endcsname{#1}%
+\newcount\zzu@titlelength
+\DeclareRobustCommand\zzu@spacetitle[1]{%
+  \zzu@titlelength=\csname str_count:N\endcsname{#1}%
   \begingroup
-    \ifhfut@degree@graduate
-      \ifcase\hfut@titlelength
+    \ifzzu@degree@graduate
+      \ifcase\zzu@titlelength
       \or\or
         \ziju{2}%
       \or
@@ -2284,7 +2321,7 @@
       \fi
     \else
       \if@mainmatter\else
-        \ifcase\hfut@titlelength
+        \ifcase\zzu@titlelength
         \or\or
           \ziju{1}%
         \or\or
@@ -2296,12 +2333,12 @@
   \endgroup
 }
 
-% 五级节标题和脚注需要使用带圈的数字，这里使用 \cs{hfut@circlefont} ：
-\newcommand\hfut@textcircled[1]{%
+% 五级节标题和脚注需要使用带圈的数字，这里使用 \cs{zzu@circlefont} ：
+\newcommand\zzu@textcircled[1]{%
   \ifnum\value{#1}<21\relax
     {\symbol{\numexpr\value{#1} + "245F\relax}}%
   \else
-    \hfut@error{Cannot display more than 20 footnotes}%
+    \zzu@error{Cannot display more than 20 footnotes}%
   \fi
 }
 
@@ -2341,7 +2378,7 @@
     %tocline     = {
     %  \if@mainmatter
     %    %\if \@chapapp \appendixname
-    %    \ifhfut@appendix
+    %    \ifzzu@appendix
     %      {附录~\arabic{chapter}~~#2}
     %    \else
     %      {第\chinese{chapter}章~#2}
@@ -2416,21 +2453,21 @@
   },
 }
 
-\ifhfut@degree@bachelor
-  \ifhfut@main@language@english
-    \hfutsetup{section-style = arabic}
+\ifzzu@degree@bachelor
+  \ifzzu@main@language@english
+    \zzusetup{section-style = arabic}
   \fi
 \fi
-\hfut@option@hook{main-language}{%
-  \ifhfut@degree@bachelor
-    \ifhfut@main@language@english
-      \hfutsetup{section-style = arabic}%
+\zzu@option@hook{main-language}{%
+  \ifzzu@degree@bachelor
+    \ifzzu@main@language@english
+      \zzusetup{section-style = arabic}%
     \fi
   \fi
 }
 
 % 在研究生格式的基础上再设置本科生的章节标题格式。
-\ifhfut@degree@bachelor
+\ifzzu@degree@bachelor
   \setcounter{secnumdepth}{4}
   \ctexset{
   %
@@ -2511,7 +2548,7 @@
   }
   %
   % 本科生的阿拉伯数字式标题的格式与研究生几乎一致，只有中文数字式需要修改。
-  \ifhfut@section@style@arabic\else
+  \ifzzu@section@style@arabic\else
     \ctexset{
       chapter = {
         name = {},
@@ -2533,14 +2570,14 @@
 % 也不添加进目录或 PDF 书签。
 % 然而像摘要、目录、符号说明这样的章节，它们不需要编号、不加入目录，
 % 但是需要修改页眉，并且加入 PDF 标签。
-% 所以我们新定义 \cs{hfut@chapter} 用于处理这些章节。%
-\NewDocumentCommand\hfut@chapter{o m}{%
+% 所以我们新定义 \cs{zzu@chapter} 用于处理这些章节。%
+\NewDocumentCommand\zzu@chapter{o m}{%
   \if@openright\cleardoublepage\else\clearpage\fi
   \IfValueTF{#1}{%
-    \hfut@pdfbookmark{#1}%
+    \zzu@pdfbookmark{#1}%
     \chaptermark{#1}%
   }{%
-    \hfut@pdfbookmark{#2}%
+    \zzu@pdfbookmark{#2}%
     \chaptermark{#2}%
   }%
   \chapter*{#2}}
@@ -2549,54 +2586,54 @@
   % \subsection{摘要}
   %
   % 中文摘要环境。
-  % 判断 \cs{hfut@tocloaded} 是为了防止本科生未调整摘要位置时的目录页码缺失。
-\newcommand\hfut@keywords@text{%
-  \hfut@clist@use{\hfut@keywords}{；}%
+  % 判断 \cs{zzu@tocloaded} 是为了防止本科生未调整摘要位置时的目录页码缺失。
+\newcommand\zzu@keywords@text{%
+  \zzu@clist@use{\zzu@keywords}{；}%
 }
-\newcommand\hfut@keywords@en@text{%
-  \hfut@clist@use{\hfut@keywords@en}{; }%
+\newcommand\zzu@keywords@en@text{%
+  \zzu@clist@use{\zzu@keywords@en}{; }%
 }
 \newenvironment{abstract}{%
-  \hfutsetup{language=chinese}%
-  \ifhfut@degree@graduate
+  \zzusetup{language=chinese}%
+  \ifzzu@degree@graduate
     \pagestyle{plain}
     \ctexset{chapter/format=\centering\Large\selectfont\bfseries}%
-    \hfut@chapter[摘要]{摘\hspace{\ccwd}要}%
+    \zzu@chapter[摘要]{摘\hspace{\ccwd}要}%
   \else
     \pagestyle{empty}
-    \hfut@chapter[摘要]{摘\hspace{\ccwd}要}%
-    % \ifhfut@tocloaded\else
+    \zzu@chapter[摘要]{摘\hspace{\ccwd}要}%
+    % \ifzzu@tocloaded\else
     %   本科生需要手动将摘要置于目录后。\par
     % \fi
   \fi
 }{
   \pagestyle{plain}
   \par\null\par\noindent
-  \textbf{关键词：}\hfut@keywords@text\par
-  \hfut@reset@main@language
+  \textbf{关键词：}\zzu@keywords@text\par
+  \zzu@reset@main@language
 }
 
 % 英文摘要环境
 \newenvironment{abstract*}{%
-  \hfutsetup{language=english}%
+  \zzusetup{language=english}%
   \ctexset{chapter/format=\centering\Large\selectfont\bfseries}%
-  \ifhfut@degree@graduate
-    \hfut@chapter[Abstract]{ABSTRACT}%
+  \ifzzu@degree@graduate
+    \zzu@chapter[Abstract]{ABSTRACT}%
     \pagestyle{plain}
   \else
     \begingroup
       \pagestyle{empty}%
-      \hfut@chapter[Abstract]{ABSTRACT}%
+      \zzu@chapter[Abstract]{ABSTRACT}%
     \endgroup
   \fi
 }{
   %\pagestyle{plain}
   \par\null\par\noindent
-  \textbf{KEYWORDS:} \hfut@keywords@en@text\par
-  \ifhfut@degree@graduate
+  \textbf{KEYWORDS:} \zzu@keywords@en@text\par
+  \ifzzu@degree@graduate
     \cleardoublepage
   \fi
-  \hfut@reset@main@language
+  \zzu@reset@main@language
 }
 
 % Reserved for compatibility until 2020-07-01.
@@ -2610,38 +2647,38 @@
 % \subsection{目录}
 
 % 判断是否已经加载目录，用于提醒本科生更改摘要和致谢的顺序。
-\newif\ifhfut@tocloaded
+\newif\ifzzu@tocloaded
 
 % 判断是否在附录中
-\newif\ifhfut@appendix
+\newif\ifzzu@appendix
 
 % 研究生规定目录另面起；
 % 本科生规定从正文起标页码。
 \renewcommand\tableofcontents{%
-  \ifhfut@degree@bachelor
+  \ifzzu@degree@bachelor
     \cleardoublepage
     %\pagenumbering{arabic}%
     \pagestyle{empty}%
-    \hfut@tocloadedtrue
+    \zzu@tocloadedtrue
   \else
     \pagestyle{plain}%
   \fi
-  \hfut@chapter{\contentsname}%
+  \zzu@chapter{\contentsname}%
   \@starttoc{toc}%
 }
 
 % 下面用 \pkg{titletoc} 宏包设置目录内容的格式。
 % 先定义目录线：
-\newcommand\hfut@leaders{\titlerule*[9bp]{\textperiodcentered}}
+\newcommand\zzu@leaders{\titlerule*[9bp]{\textperiodcentered}}
 
 % 各章目录要求宋体 12 磅，单倍行距，段前 6 磅，段后 0 磅，两端对齐，
 % 页码右对齐，章序号与章名间空一字。
 % 但是 Word 模板中实际是行距 20 磅。
-\ifhfut@degree@graduate
+\ifzzu@degree@graduate
   \titlecontents{chapter}
     [\z@]{\bfseries\normalsize}
     {\contentspush{\thecontentslabel\hspace{0.5\ccwd}}}{}
-    {\normalsize\hfut@leaders\contentspage}
+    {\normalsize\zzu@leaders\contentspage}
     %
     % 一级节标题目录要求宋体 12 磅，单倍行距，左缩进一字，段前 6 磅，段后 0 磅，
     % 两端对齐，页码右对齐，序号与题名间空一字。
@@ -2649,7 +2686,7 @@
   \titlecontents{section}
     [2\ccwd]{\normalsize}
     {\contentspush{\thecontentslabel\hspace{0.5\ccwd}}}{}
-    {\normalsize\hfut@leaders\contentspage}
+    {\normalsize\zzu@leaders\contentspage}
     %
     % 二级节标题目录要求宋体 12 磅，单倍行距，左缩进两字，段前 6 磅，段后 0 磅，
     % 两端对齐，页码右对齐，序号与题名间空一字。
@@ -2657,34 +2694,34 @@
   \titlecontents{subsection}
     [4\ccwd]{\normalsize}
     {\contentspush{\thecontentslabel\hspace{0.5\ccwd}}}{}
-    {\normalsize\hfut@leaders\contentspage}
+    {\normalsize\zzu@leaders\contentspage}
     %
     % 本科生的目录使用小四宋体（同正文字体），其他同研究生的格式相近。
 \else
   \titlecontents{chapter}
     [\z@]{\bfseries\normalsize}
     {\contentspush{\thecontentslabel\unskip\hspace{\ccwd}}}{}
-    {\hfut@leaders\contentspage}
+    {\zzu@leaders\contentspage}
   \titlecontents{section}
     [\ccwd]{\normalsize}
     {\contentspush{\thecontentslabel\hspace{\ccwd}}}{}
-    {\hfut@leaders\contentspage}
+    {\zzu@leaders\contentspage}
   \titlecontents{subsection}
     [2\ccwd]{\normalsize}
     {\contentspush{\thecontentslabel\hspace{\ccwd}}}{}
-      %\ifhfut@section@style@arabic\hspace{\ccwd}\else 、\fi}}{}
-    {\hfut@leaders\contentspage}
+      %\ifzzu@section@style@arabic\hspace{\ccwd}\else 、\fi}}{}
+    {\zzu@leaders\contentspage}
 \fi
 
 % 本科生要求目录中正文每章前多空一行，而目录、附录等章则不需要空行，
 % 所以不能简单判断 \cs{if@mainmatter}，需要重新定义 \cs{mainmatter} 等命令。
-% \newif\ifhfut@addtocspace
-% \ifhfut@degree@bachelor
-%   \hfut@addtocspacetrue
-%   \g@addto@macro\frontmatter{\hfut@addtocspacefalse}%
-%   \g@addto@macro\mainmatter{\hfut@addtocspacetrue}%
-%   \g@addto@macro\backmatter{\hfut@addtocspacefalse}%
-%   \g@addto@macro\appendix{\hfut@addtocspacefalse}%
+% \newif\ifzzu@addtocspace
+% \ifzzu@degree@bachelor
+%   \zzu@addtocspacetrue
+%   \g@addto@macro\frontmatter{\zzu@addtocspacefalse}%
+%   \g@addto@macro\mainmatter{\zzu@addtocspacetrue}%
+%   \g@addto@macro\backmatter{\zzu@addtocspacefalse}%
+%   \g@addto@macro\appendix{\zzu@addtocspacefalse}%
 % \fi
 
 % 处理本科生在目录中添加空行。
@@ -2693,8 +2730,8 @@
 %   \thispagestyle{\CTEX@chapter@pagestyle}%
 %   \global\@topnum\z@
 %   \@afterindenttrue
-%   \ifhfut@degree@bachelor
-%     \ifhfut@addtocspace
+%   \ifzzu@degree@bachelor
+%     \ifzzu@addtocspace
 %       \addtocontents{toc}{\protect\addvspace{12bp}}%
 %     \fi
 %   \fi
@@ -2702,33 +2739,33 @@
 % }
 
 % 研究生要求图、表的清单须另页起。
-\newlength{\hfut@lof@label@width}
-\newcommand\hfut@set@lof@format{%
-  \settowidth{\hfut@lof@label@width}{\figurename~9.99}%
-  \addtolength{\hfut@lof@label@width}{1em}%
+\newlength{\zzu@lof@label@width}
+\newcommand\zzu@set@lof@format{%
+  \settowidth{\zzu@lof@label@width}{\figurename~9.99}%
+  \addtolength{\zzu@lof@label@width}{1em}%
   \titlecontents{figure}%
-    [\hfut@lof@label@width]{\normalsize}%
-    {\contentslabel[\figurename~\thecontentslabel]{\hfut@lof@label@width}}{}%
-    {\hfut@leaders\contentspage}%
+    [\zzu@lof@label@width]{\normalsize}%
+    {\contentslabel[\figurename~\thecontentslabel]{\zzu@lof@label@width}}{}%
+    {\zzu@leaders\contentspage}%
   \titlecontents{table}%
-    [\hfut@lof@label@width]{\normalsize}%
-    {\contentslabel[\tablename~\thecontentslabel]{\hfut@lof@label@width}}{}%
-    {\hfut@leaders\contentspage}%
+    [\zzu@lof@label@width]{\normalsize}%
+    {\contentslabel[\tablename~\thecontentslabel]{\zzu@lof@label@width}}{}%
+    {\zzu@leaders\contentspage}%
 }
-\hfut@set@lof@format
-\hfut@option@hook{main-language}{\hfut@set@lof@format}
+\zzu@set@lof@format
+\zzu@option@hook{main-language}{\zzu@set@lof@format}
 \renewcommand\listoffigures{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \cleardoublepage
   \fi
-  \hfut@chapter{\listfigurename}%
+  \zzu@chapter{\listfigurename}%
   \@starttoc{lof}%
 }
 \renewcommand\listoftables{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \cleardoublepage
   \fi
-  \hfut@chapter{\listtablename}%
+  \zzu@chapter{\listtablename}%
   \@starttoc{lot}%
 }
 
@@ -2737,13 +2774,13 @@
 
 % 研究生规定符号说明另页起，标题字体字号等同论文正文，
 \newenvironment{notation}{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \cleardoublepage
     \pagestyle{plain}%
   \fi
-  \hfut@chapter{\hfut@notation@name}%
+  \zzu@chapter{\zzu@notation@name}%
 }{%
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \clearpage
     \pagestyle{plain}%
   \fi
@@ -2799,7 +2836,7 @@
 \Urlmuskip=0mu plus 0.1mu
 
 % 脚注用带圈的数字：
-\renewcommand\thefootnote{\hfut@textcircled{footnote}}
+\renewcommand\thefootnote{\zzu@textcircled{footnote}}
 
 % LaTeX 默认脚注按章计数，即每章的开始才重置脚注计数器；我们修改为按页计数。
 % 简单的|\@addtoreset{footnote}{page}|并不可靠，
@@ -2824,23 +2861,23 @@
 
 % 调整列表中各项之间过大的间距。
 \setlength\partopsep{\z@}
-\newcommand\hfut@nolistsep{%
+\newcommand\zzu@nolistsep{%
   \parsep 0\p@ \@plus.2\p@
   \topsep 0\p@ \@plus.2\p@
   \itemsep0\p@ \@plus.2\p@
 }
 \def\@listi{\leftmargin\leftmargini
-            \hfut@nolistsep}
+            \zzu@nolistsep}
 \let\@listI\@listi
 \@listi
 \def\@listii {\leftmargin\leftmarginii
               \labelwidth\leftmarginii
               \advance\labelwidth-\labelsep
-              \hfut@nolistsep}
+              \zzu@nolistsep}
 \def\@listiii{\leftmargin\leftmarginiii
               \labelwidth\leftmarginiii
               \advance\labelwidth-\labelsep
-              \hfut@nolistsep}
+              \zzu@nolistsep}
 
 
 % \subsection{浮动体}
@@ -2894,7 +2931,7 @@
    \else
      \addvspace\intextsep
    \fi}%
-  {}{\hfut@patch@error{\@addtocurcol}}
+  {}{\zzu@patch@error{\@addtocurcol}}
 \patchcmd{\@addtocurcol}%
   {\vskip\intextsep \ifnum\outputpenalty <-\@Mii \vskip -\parskip\fi}%
   {\ifnum\outputpenalty <-\@Mii
@@ -2903,12 +2940,12 @@
    \else
      \vskip\intextsep
    \fi}%
-  {}{\hfut@patch@error{\@addtocurcol}}
+  {}{\zzu@patch@error{\@addtocurcol}}
 \patchcmd{\@getpen}{\@M}{\@Mi}
-  {}{\hfut@patch@error{\@getpen}}
+  {}{\zzu@patch@error{\@getpen}}
 
-\DeclareCaptionFont{hfut}{%
-  \ifhfut@language@chinese
+\DeclareCaptionFont{zzu}{%
+  \ifzzu@language@chinese
     \fontsize{10.5bp}{13.65bp}\selectfont
   \else
     \fontsize{10.5bp}{12.075bp}\selectfont
@@ -2916,14 +2953,14 @@
 }
 
 \captionsetup{
-  font           = hfut,
+  font           = zzu,
   labelsep       = quad,
   skip           = 6bp,
   figureposition = bottom,
   tableposition  = top,
 }
 % graduate的图表标题不需要加粗
-% \ifhfut@degree@graduate
+% \ifzzu@degree@graduate
 %   \captionsetup{font+=bf}
 %   \captionsetup[table]{font+=sf}
 % \fi
@@ -2938,7 +2975,7 @@
 \newcommand\note[1]{%
   \begingroup
     \captionsetup{
-      font          = hfut,
+      font          = zzu,
       margin        = 2\ccwd,
       position      = bottom,
     }%
@@ -2951,7 +2988,7 @@
   \normalsize
 }{%
   \small
-}{}{\hfut@patch@error{\@floatboxreset}}
+}{}{\zzu@patch@error{\@floatboxreset}}
 
 % 对 \pkg{longtable} 跨页表格进行相同的设置。
 %
@@ -2979,13 +3016,13 @@
   %
   % 几种种引用样式，与 \file{bst} 文件名保持一致，
   % 这样在使用 \cs{bibliographystyle} 选择参考文献表的样式时也会设置对应的引用样式。
-  \@namedef{bibstyle@hfutthesis-numerical}{\bibstyle@super}
-  \@namedef{bibstyle@hfutthesis-authoryear}{\bibstyle@authoryear}
-  \@namedef{bibstyle@hfutthesis-bachelor}{\bibstyle@super}
+  \@namedef{bibstyle@zzuthesis-numerical}{\bibstyle@super}
+  \@namedef{bibstyle@zzuthesis-authoryear}{\bibstyle@authoryear}
+  \@namedef{bibstyle@zzuthesis-bachelor}{\bibstyle@super}
   %
   % 定义接口 cite-style 切换引用样式。
-  \hfut@option@hook{cite-style}{%
-    \citestyle{\hfut@cite@style}%
+  \zzu@option@hook{cite-style}{%
+    \citestyle{\zzu@cite@style}%
   }
   %
   % 如果文献序号作为叙述文字的一部分，需要临时将文献序号与正文平排
@@ -3207,9 +3244,9 @@
   % 为了将参考文献加入目录和 pdf 书签，重新定义 \pkg{natbib} 的 \cmd{bibsection}
   % 另外如果调用了 \pkg{chapterbib} 或者使用了 \opt{sectionbib} 参数，
   % 需要使用节标题 \cs{section}。
-  \newcommand\hfut@bib@chapter{%
+  \newcommand\zzu@bib@chapter{%
     \@mainmatterfalse
-    \ifhfut@degree@bachelor
+    \ifzzu@degree@bachelor
       \ctexset{
         chapter/format = {
           \centering\fontsize{16bp}{22bp}\sffamily\bfseries\selectfont
@@ -3220,22 +3257,22 @@
     \fi
     \chapter{\bibname}%
   }%
-  \newcommand\hfut@bib@section{%
+  \newcommand\zzu@bib@section{%
     \begingroup
       \ctexset{section/numbering=false}%
       \section{\bibname}%
     \endgroup
   }%
   \@ifpackagewith{chapterbib}{sectionbib}{%
-    \hfut@error{The "sectionbib" option cannot be used with chaperbib if natbib loaded}%
+    \zzu@error{The "sectionbib" option cannot be used with chaperbib if natbib loaded}%
   }{}%
   \@ifpackageloaded{chapterbib}{%
-    \let\bibsection\hfut@bib@section
+    \let\bibsection\zzu@bib@section
   }{%
     \@ifxundefined\NAT@sectionbib{%
-      \let\bibsection\hfut@bib@chapter
+      \let\bibsection\zzu@bib@chapter
     }{%
-      \let\bibsection\hfut@bib@section
+      \let\bibsection\zzu@bib@section
     }%
   }%
   %
@@ -3272,8 +3309,8 @@
 % 定义了一个满足要求的致谢环境：
 \newenvironment{acknowledgements}{%
   \@mainmatterfalse
-  \ifhfut@degree@graduate
-    \hfut@chapter[致谢]{\hfut@acknowledgements@name}%
+  \ifzzu@degree@graduate
+    \zzu@chapter[致谢]{\zzu@acknowledgements@name}%
   \else
     \chapter{致谢}%
   \fi
@@ -3303,7 +3340,7 @@
     section/beforeskip  = 10bp,
     section/afterskip   = 10bp,
   }
-  \chapter{\hfut@publication@name}%
+  \chapter{\zzu@publication@name}%
   \renewcommand\thesection{\arabic{section}}
   \setenumerate[1]{itemsep = 0pt, parsep = 0pt, label = （\arabic*）}
   \setcounter{section}{0}
@@ -3328,7 +3365,7 @@
   }
   %
   % 如果为 \opt{pdf} 样式，设置 hyperlink 颜色
-  \ifhfut@output@electronic
+  \ifzzu@output@electronic
     \hypersetup{
       colorlinks = true,
       allcolors  = red,
@@ -3339,26 +3376,26 @@
   %
   % 填写 PDF 元信息。
   \AtBeginDocument{%
-    \ifhfut@main@language@chinese
+    \ifzzu@main@language@chinese
       \hypersetup{
-        pdftitle  = \hfut@title,
-        pdfauthor = \hfut@author,
+        pdftitle  = \zzu@title,
+        pdfauthor = \zzu@author,
       }%
     \else
       \hypersetup{
-        pdftitle  = \hfut@title@en,
-        pdfauthor = \hfut@author@en,
+        pdftitle  = \zzu@title@en,
+        pdfauthor = \zzu@author@en,
       }%
     \fi
   }
   %
   % 添加 PDF 书签
   %
-  \newcounter{hfut@bookmarknumber}
-  \renewcommand\hfut@pdfbookmark[1]{%
+  \newcounter{zzu@bookmarknumber}
+  \renewcommand\zzu@pdfbookmark[1]{%
     \phantomsection
-    \stepcounter{hfut@bookmarknumber}%
-    \pdfbookmark[0]{#1}{hfutchapter.\thehfut@bookmarknumber}%
+    \stepcounter{zzu@bookmarknumber}%
+    \pdfbookmark[0]{#1}{zzuchapter.\thezzu@bookmarknumber}%
   }
   %
   % 在 PDF 字符串中去掉换行，以减少 \pkg{hyperref} 的警告信息。
@@ -3379,7 +3416,7 @@
   %
   % 设置中文的 \cs{autoref}。
   % \footnote{\url{https://tex.stackexchange.com/a/66150/82731}}
-  \ifhfut@language@chinese
+  \ifzzu@language@chinese
     \def\equationautorefname~#1\null{公式~(#1)\null}
     \def\footnoteautorefname{脚注}
     \def\itemautorefname~#1\null{第~#1~项\null}
@@ -3402,52 +3439,52 @@
 % \subsubsection{\pkg{amsthm} 宏包}
 
 \AtEndOfPackageFile*{amsthm}{
-  \newtheoremstyle{hfutplain}
+  \newtheoremstyle{zzuplain}
     {}{}
     {}{2\ccwd}
     {\bfseries}{}
     {\ccwd}{}
-  \theoremstyle{hfutplain}
+  \theoremstyle{zzuplain}
   % 定义新的定理
-  \ifhfut@language@chinese
-    \newcommand\hfut@assertion@name{断言}
-    \newcommand\hfut@assumption@name{假设}
-    \newcommand\hfut@axiom@name{公理}
-    \newcommand\hfut@corollary@name{推论}
-    \newcommand\hfut@definition@name{定义}
-    \newcommand\hfut@example@name{例}
-    \newcommand\hfut@lemma@name{引理}
-    \newcommand\hfut@proof@name{证明}
-    \newcommand\hfut@proposition@name{命题}
-    \newcommand\hfut@remark@name{注}
-    \newcommand\hfut@theorem@name{定理}
+  \ifzzu@language@chinese
+    \newcommand\zzu@assertion@name{断言}
+    \newcommand\zzu@assumption@name{假设}
+    \newcommand\zzu@axiom@name{公理}
+    \newcommand\zzu@corollary@name{推论}
+    \newcommand\zzu@definition@name{定义}
+    \newcommand\zzu@example@name{例}
+    \newcommand\zzu@lemma@name{引理}
+    \newcommand\zzu@proof@name{证明}
+    \newcommand\zzu@proposition@name{命题}
+    \newcommand\zzu@remark@name{注}
+    \newcommand\zzu@theorem@name{定理}
   \else
-    \newcommand\hfut@assertion@name{Assertion}
-    \newcommand\hfut@assumption@name{Assumption}
-    \newcommand\hfut@axiom@name{Axiom}
-    \newcommand\hfut@corollary@name{Corollary}
-    \newcommand\hfut@definition@name{Definition}
-    \newcommand\hfut@example@name{Example}
-    \newcommand\hfut@lemma@name{Lemma}
-    \newcommand\hfut@proof@name{Proof}
-    \newcommand\hfut@proposition@name{Proposition}
-    \newcommand\hfut@remark@name{Remark}
-    \newcommand\hfut@theorem@name{Theorem}
+    \newcommand\zzu@assertion@name{Assertion}
+    \newcommand\zzu@assumption@name{Assumption}
+    \newcommand\zzu@axiom@name{Axiom}
+    \newcommand\zzu@corollary@name{Corollary}
+    \newcommand\zzu@definition@name{Definition}
+    \newcommand\zzu@example@name{Example}
+    \newcommand\zzu@lemma@name{Lemma}
+    \newcommand\zzu@proof@name{Proof}
+    \newcommand\zzu@proposition@name{Proposition}
+    \newcommand\zzu@remark@name{Remark}
+    \newcommand\zzu@theorem@name{Theorem}
   \fi
-  \newtheorem{theorem}             {\hfut@theorem@name}    [chapter]
-  \newtheorem{assertion}  [theorem]{\hfut@assertion@name}
-  \newtheorem{axiom}      [theorem]{\hfut@axiom@name}
-  \newtheorem{corollary}  [theorem]{\hfut@corollary@name}
-  \newtheorem{lemma}      [theorem]{\hfut@lemma@name}
-  \newtheorem{proposition}[theorem]{\hfut@proposition@name}
-  \newtheorem{assumption}          {\hfut@assumption@name} [chapter]
-  \newtheorem{definition}          {\hfut@definition@name} [chapter]
-  \newtheorem{example}             {\hfut@example@name}    [chapter]
-  \newtheorem*{remark}             {\hfut@remark@name}
+  \newtheorem{theorem}             {\zzu@theorem@name}    [chapter]
+  \newtheorem{assertion}  [theorem]{\zzu@assertion@name}
+  \newtheorem{axiom}      [theorem]{\zzu@axiom@name}
+  \newtheorem{corollary}  [theorem]{\zzu@corollary@name}
+  \newtheorem{lemma}      [theorem]{\zzu@lemma@name}
+  \newtheorem{proposition}[theorem]{\zzu@proposition@name}
+  \newtheorem{assumption}          {\zzu@assumption@name} [chapter]
+  \newtheorem{definition}          {\zzu@definition@name} [chapter]
+  \newtheorem{example}             {\zzu@example@name}    [chapter]
+  \newtheorem*{remark}             {\zzu@remark@name}
   % \pkg{amsthm} 单独定义了 proof 环境，这里重新定义以满足格式要求。
   % 原本模仿 \pkg{amsthm} 写成 |\item[\hskip\labelsep\hskip2\ccwd #1\hskip\ccwd]|，
   % 但是却会多出一些间隙。
-  \renewenvironment{proof}[1][\hfut@proof@name]{\par
+  \renewenvironment{proof}[1][\zzu@proof@name]{\par
     \pushQED{\qed}%
     \normalfont \topsep6\p@\@plus6\p@\relax
     \trivlist
@@ -3457,7 +3494,7 @@
     }{%
     \popQED\endtrivlist\@endpefalse
   }
-  \renewcommand\qedsymbol{\hfut@qed}
+  \renewcommand\qedsymbol{\zzu@qed}
 }
 
 
@@ -3467,7 +3504,7 @@
 \PassOptionsToPackage{algochapter}{algorithm2e}
 
 \AtEndOfPackageFile*{algorithm2e}{
-  \ifhfut@language@chinese
+  \ifzzu@language@chinese
     \SetAlgorithmName{算法}{算法}{算法清单}
   \else
     \SetAlgorithmName{Algorithm}{Algorithm}{List of Algorithms}
@@ -3477,23 +3514,23 @@
   \SetAlCapSkip{6bp}
   \SetAlCapFnt{\small}
   \SetAlCapNameFnt{\small}
-  \ifhfut@degree@graduate
+  \ifzzu@degree@graduate
     \SetAlCapNameSty{textbf}
   \fi
   \SetAlgoCaptionSeparator{\unskip\hspace*{\ccwd}}
   %
   % 设置算法清单的格式
   \renewcommand\listofalgocfs{%
-    \ifhfut@degree@graduate
+    \ifzzu@degree@graduate
       \cleardoublepage
     \fi
-    \hfut@chapter{\listalgorithmcfname}%
+    \zzu@chapter{\listalgorithmcfname}%
     \@starttoc{loa}%
   }
   \titlecontents{algocf}
     [2.3em]{\normalsize}
     {\contentslabel{2.3em}}{}
-    {\hfut@leaders\contentspage}
+    {\zzu@leaders\contentspage}
   \contentsuse{algocf}{loa}
 }
 
@@ -3501,13 +3538,13 @@
 % \subsubsection{\pkg{nomencl} 宏包}
 
 \AtEndOfPackageFile*{nomencl}{
-  \let\nomname\hfut@notation@name
+  \let\nomname\zzu@notation@name
   \def\thenomenclature{%
-    \ifhfut@degree@graduate
+    \ifzzu@degree@graduate
       \cleardoublepage
       \pagestyle{headings}%
     \fi
-    \hfut@chapter{\hfut@notation@name}%
+    \zzu@chapter{\zzu@notation@name}%
     \nompreamble
     \list{}{%
       \labelwidth\nom@tempdim
@@ -3518,7 +3555,7 @@
   \def\endthenomenclature{%
     \endlist
     \nompostamble
-    \ifhfut@degree@graduate
+    \ifzzu@degree@graduate
       \clearpage
       \pagestyle{plain}%
     \fi
@@ -3534,8 +3571,8 @@
     separate-uncertainty = true,
     inter-unit-product   = \ensuremath{{}\cdot{}},
   }
-  \newcommand\hfut@set@siunitx@language{%
-  \ifhfut@language@chinese
+  \newcommand\zzu@set@siunitx@language{%
+  \ifzzu@language@chinese
     \sisetup{
       list-final-separator = { 和 },
       list-pair-separator  = { 和 },
@@ -3549,8 +3586,8 @@
         }%
   \fi
   }
-  \hfut@set@siunitx@language
-  \hfut@option@hook{language}{\hfut@set@siunitx@language}
+  \zzu@set@siunitx@language
+  \zzu@option@hook{language}{\zzu@set@siunitx@language}
 }
 
 % \subsubsection{\pkg{chapterbib} 宏包}
@@ -3558,7 +3595,7 @@
 \AtEndOfPackageFile*{chapterbib}{
   \@ifpackageloaded{natbib}{%
     \@ifpackagewith{chapterbib}{sectionbib}{%
-      \hfut@error{The "sectionbib" option cannot be used with chaperbib if natbib loaded}%
+      \zzu@error{The "sectionbib" option cannot be used with chaperbib if natbib loaded}%
     }{}%
     \renewcommand\bibsection{%
       \begingroup

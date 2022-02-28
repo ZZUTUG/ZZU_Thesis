@@ -1,13 +1,13 @@
 % !TeX root = ./main.tex
 
-\hfutsetup{
-  title              = {合肥工业大学学位论文模板示例文档 \hfutthesisversion},
-  title*             = {An example of thesis template for \\ Hefei University of Technology \hfutthesisversion},
-  stuID              = {学号},
-  author             = {XXX},
+\zzusetup{
+  title              = {郑州大学学位论文模板示例文档 \zzuthesisversion},
+  title*             = {An example of thesis template for \\ Zhengzhou University}, %\zzuthesisversion},
+  stuID              = {202112222014346},
+  author             = {王建召},
   author*            = {Yin Zhenhao},
-  speciality         = {数学与应用数学},
-  supervisor         = {XXX~教授},
+  speciality         = {水工结构工程},
+  supervisor         = {谷教授},
   % date               = {2021-05},  % 完成日期默认为当前日期 格式:yyyy-mm
   % secret-level       = {秘密},     % 绝密|机密|秘密|内部交流，注释本行则公开
   % secret-year        = {10年},      % 保密年限，必须与secret-level搭配使用
@@ -30,14 +30,14 @@
   research           = {研究方向}, % 研究方向，默认为 “研究方向”
   signchairman       = {专家工作单位，职称，姓名}, % 答辩委员签名页 主席：  默认为空
   signmember         = {XXX，XXX，XXX \\ XXX，XXX，XXX}, % 答辩委员签名页 委员：  默认为空
-  signsupervisor     = {合肥工业大学，XXX，XXX}, % 答辩委员签名页 导师：  默认为空
+  signsupervisor     = {郑州大学，XXX，XXX}, % 答辩委员签名页 导师：  默认为空
   %
   %
   %
   % Parameters ONLY for bachelor's option
   %
   ugtype             = {论文}, % 封面第一栏“类型”的选项：设计或者论文，默认“论文”
-  hfuteryear         = {2017级}, % 入学年份 
+  zzueryear         = {2017级}, % 入学年份 
   department         = {应用数学系}, % 系名称
   %
   %
@@ -76,21 +76,21 @@
 % 参考文献使用 BibTeX + natbib 宏包
 % 顺序编码制
 \usepackage[sort]{natbib}
-\bibliographystyle{hfutthesis-numerical}
+\bibliographystyle{zzuthesis-numerical}
 
 % 著者-出版年制
 % \usepackage{natbib}
-% \bibliographystyle{hfutthesis-authoryear}
+% \bibliographystyle{zzuthesis-authoryear}
 
 % 本科生参考文献的著录格式
 % \usepackage[sort]{natbib}
-% \bibliographystyle{hfutthesis-bachelor}
+% \bibliographystyle{zzuthesis-bachelor}
 
 % 参考文献使用 BibLaTeX 宏包
-% \usepackage[style=hfutthesis-numeric]{biblatex}
-% \usepackage[bibstyle=hfutthesis-numeric,citestyle=hfutthesis-inline]{biblatex}
-% \usepackage[style=hfutthesis-authoryear]{biblatex}
-% \usepackage[style=hfutthesis-bachelor]{biblatex}
+% \usepackage[style=zzuthesis-numeric]{biblatex}
+% \usepackage[bibstyle=zzuthesis-numeric,citestyle=zzuthesis-inline]{biblatex}
+% \usepackage[style=zzuthesis-authoryear]{biblatex}
+% \usepackage[style=zzuthesis-bachelor]{biblatex}
 % 声明 BibLaTeX 的数据库
 % \addbibresource{bib/ustc.bib}
 
@@ -101,7 +101,7 @@
 \makeatletter
 \newcommand\dif{%  % 微分符号
   \mathop{}\!%
-  \ifhfut@math@style@TeX
+  \ifzzu@math@style@TeX
     d%
   \else
     \mathrm{d}%
